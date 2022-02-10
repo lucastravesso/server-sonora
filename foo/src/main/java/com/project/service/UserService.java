@@ -37,7 +37,7 @@ public class UserService {
 	
 	public ResponseEntity<User> insertUser(UserDTO dto)
 	{
-		User user = mapper.map(dto, User.class, "password");
+		User user = mapper.map(dto, User.class);
 		System.out.println(user);
 		Address address = mapper.map(dto.getAddressDto(), Address.class);
 		address = addressRepository.save(address);
