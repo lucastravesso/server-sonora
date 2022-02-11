@@ -1,7 +1,9 @@
 package com.project.dto;
 
-
 import java.util.Date;
+import java.util.Set;
+
+import com.project.entity.Profile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +40,7 @@ public class UserDTO {
 	
 	private AddressDTO addressDto;
 	
+	private Set<Profile> profile;
 	
 	// ------get e set
 	

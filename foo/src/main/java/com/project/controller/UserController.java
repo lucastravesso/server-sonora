@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.UserDTO;
-import com.project.dto.UserLoginDTO;
 import com.project.entity.User;
 import com.project.service.UserService;
 
@@ -27,7 +26,6 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
 	
 	@PostMapping(value = "/register")
 	public ResponseEntity<User> insertUser(@RequestBody @Valid UserDTO dto)
@@ -41,7 +39,6 @@ public class UserController {
 		return userService.listAll();
 	}
 	
-	
 	@DeleteMapping(value ="/delete/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable("id") Integer id) throws AccountNotFoundException
 	{
@@ -52,12 +49,6 @@ public class UserController {
 	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,@RequestBody @Valid UserDTO dto)
 	{
 		return userService.updateUser(id, dto);
-	}
-	
-	@PostMapping(value ="/login")
-	public ResponseEntity<User> login(@RequestBody @Valid UserLoginDTO dto)
-	{
-		return userService.userLogin(dto);
 	}
 	
 }

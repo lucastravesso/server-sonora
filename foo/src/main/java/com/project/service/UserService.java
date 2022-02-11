@@ -1,7 +1,6 @@
 package com.project.service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import com.project.dto.AddressDTO;
 import com.project.dto.UserDTO;
-import com.project.dto.UserLoginDTO;
 import com.project.entity.Address;
 import com.project.entity.User;
 import com.project.repository.AddressRepository;
@@ -38,11 +36,10 @@ public class UserService {
 	public ResponseEntity<User> insertUser(UserDTO dto)
 	{
 		User user = mapper.map(dto, User.class);
-		System.out.println(user);
+		user.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
 		Address address = mapper.map(dto.getAddressDto(), Address.class);
 		address = addressRepository.save(address);
 		user.setAddress(address);
-		user.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
 		userRepository.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -98,24 +95,5 @@ public class UserService {
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.notFound().build();	
-		
 	}
-	
-	public ResponseEntity<User> userLogin(UserLoginDTO dto)
-	{
-		User user = userRepository.findOneByEmail(dto.getMail());
-		
-		if(Objects.nonNull(user))
-		{
-			if(dto.getPassword().equals(user.getPassword()))
-			{
-				return ResponseEntity.ok().build();
-			}else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-			}
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-	}
-	
-	
 }
