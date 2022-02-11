@@ -22,6 +22,7 @@ public class TokenService {
 	private String secret;
 
 	public String generateToken(Authentication authentication) {
+		
 		User logged = (User) authentication.getPrincipal();
 		Date today = new Date();
 		Date expirationDate = new Date(today.getTime() + Long.parseLong(expiration));
@@ -44,10 +45,9 @@ public class TokenService {
 		}
 	}
 
-	public Integer getIdUsuario(String token) {
+	public Long getIdUser(String token) {
 		Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
-		return Integer.parseInt(claims.getSubject());
+		return Long.parseLong(claims.getSubject());
 	}
-
 }
 
