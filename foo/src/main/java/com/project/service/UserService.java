@@ -111,7 +111,7 @@ public class UserService {
 			{
 				return ResponseEntity.ok().build();
 			}else {
-				return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
