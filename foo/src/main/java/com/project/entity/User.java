@@ -1,6 +1,7 @@
 package com.project.entity;
 
 import java.util.Collection;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,14 +65,11 @@ public class User implements UserDetails {
 	private Address address;
 	
 	@Column(name = "usu_senha")
-	private String password;
-	
-	@Column(name = "usu_login")
-	private String login;
+	protected String password;
 
 	@Email
 	@Column(name = "usu_email")
-	private String mail;
+	protected String mail;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Profile> profiles = new HashSet<>();
@@ -81,35 +79,40 @@ public class User implements UserDetails {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public String getPassword() {
+		return this.password;
+	}
 
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.mail;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	
 	public UsernamePasswordAuthenticationToken converter() {

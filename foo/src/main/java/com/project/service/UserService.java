@@ -79,7 +79,6 @@ public class UserService {
 			user.get().setRg(dto.getRg());
 			user.get().setBorn(dto.getBorn());
 			user.get().setRegister(dto.getRegister());
-			user.get().setLogin(dto.getLogin());
 			user.get().setPassword(dto.getPassword());
 			user.get().setMail(dto.getMail());
 			user.get().getAddress().setCountry(dto.getAddressDto().getCountry());
