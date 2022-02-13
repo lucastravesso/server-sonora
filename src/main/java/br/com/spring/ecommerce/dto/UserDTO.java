@@ -4,9 +4,13 @@ import java.util.Date;
 import java.util.Set;
 
 import br.com.spring.ecommerce.model.Profile;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
 public class UserDTO {
@@ -25,11 +29,9 @@ public class UserDTO {
 	
 	private Date register;
 
+	private String email;
+	
 	private String password;
-
-	private String login;
-
-	private String mail;
 	
 	private AddressDTO addressDto;
 	

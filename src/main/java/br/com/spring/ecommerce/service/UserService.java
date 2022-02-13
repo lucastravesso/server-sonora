@@ -50,6 +50,7 @@ public class UserService {
 		return user.stream().map(u ->{
 			UserDTO dto = mapper.map(u, UserDTO.class);
 			AddressDTO aDto = mapper.map(u.getAddress(), AddressDTO.class);
+			dto.setProfile(u.getProfiles());
 			dto.setAddressDto(aDto);
 			return dto;
 		}).collect(Collectors.toList());
@@ -77,7 +78,7 @@ public class UserService {
 			user.get().setBorn(dto.getBorn());
 			user.get().setRegister(dto.getRegister());
 			user.get().setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
-			user.get().setEmail(dto.getMail());
+			user.get().setEmail(dto.getEmail());
 			user.get().getAddress().setCountry(dto.getAddressDto().getCountry());
 			user.get().getAddress().setState(dto.getAddressDto().getState());
 			user.get().getAddress().setCity(dto.getAddressDto().getCity());

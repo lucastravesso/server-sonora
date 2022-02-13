@@ -18,6 +18,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,6 +31,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@DynamicUpdate
 @Table(name = "usuarios")
 public class User implements UserDetails{
 
@@ -39,12 +41,6 @@ public class User implements UserDetails{
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	@Column(name = "id_usuario")
 	private Integer id;
-	
-	@Column(name = "usu_email")
-	protected String email;
-	
-	@Column(name = "usu_senha")
-	protected String password;
 	
 	@Column(name = "primeiro_nome")
 	private String firstName;
@@ -63,6 +59,13 @@ public class User implements UserDetails{
 	
 	@Column(name = "usu_dt_registro")
 	private Date register;
+	
+	@Column(name = "usu_email")
+	protected String email;
+	
+	@Column(name = "usu_senha")
+	protected String password;
+	
 	
 	@OneToOne(targetEntity = Address.class, cascade = CascadeType.REMOVE, optional = true)
 	@JoinColumn(name = "id_endereco", foreignKey = @ForeignKey(name = "fk_endereco"))

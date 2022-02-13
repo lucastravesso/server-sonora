@@ -1,7 +1,5 @@
 package br.com.spring.ecommerce.model;
 
-import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
