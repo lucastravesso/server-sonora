@@ -12,7 +12,7 @@ import br.com.spring.ecommerce.model.User;
 public interface UserRepository extends JpaRepository<User, Integer>{
 	
 	@Query("SELECT u from User u where u.id = ?1")
-	User findOneById(Long idUsuario);
+	User findOneById(Integer idUsuario);
 	
 	@Query("SELECT u from User u where u.email like %?1%")
 	Optional<User> findByEmail(String email);

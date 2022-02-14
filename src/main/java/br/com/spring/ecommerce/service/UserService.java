@@ -2,6 +2,7 @@ package br.com.spring.ecommerce.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -17,8 +18,10 @@ import org.springframework.stereotype.Service;
 import br.com.spring.ecommerce.dto.AddressDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.model.Address;
+import br.com.spring.ecommerce.model.Profile;
 import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.AddressRepository;
+import br.com.spring.ecommerce.repository.ProfileRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 
 @Service
@@ -30,6 +33,9 @@ public class UserService {
 	@Autowired
 	private AddressRepository addressRepository;
 	
+	@Autowired
+	private ProfileRepository profileRepository;
+	
 	private Mapper mapper = new DozerBeanMapper();
 	
 	public ResponseEntity<User> insertUser(UserDTO dto)
@@ -39,6 +45,11 @@ public class UserService {
 		Address address = mapper.map(dto.getAddressDto(), Address.class);
 		address = addressRepository.save(address);
 		user.setAddress(address);
+		
+		List<Profile> profile = profileRepository.findAll();
+		Set<Profile> role = profile.stream().filter(p -> p.getName().equals("COMPRADOR")).collect(Collectors.toSet());
+		user.setProfiles(role);
+		
 		userRepository.save(user);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
