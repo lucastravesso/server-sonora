@@ -2,12 +2,16 @@ package br.com.spring.ecommerce.controller;
 
 import java.util.List;
 
+import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,4 +39,21 @@ public class ProductsController {
 		return productsService.listAll();
 	}
 	
+	@DeleteMapping(value = "/delete/{id}")
+	public ResponseEntity<?> deleteProduct(@PathVariable("id") Integer id) throws AccountNotFoundException
+	{
+		return productsService.deleteProduct(id);
+	}
+	
+	@PutMapping(value = "/update/{id}")
+	public ResponseEntity<?> updateProduct(@PathVariable("id") Integer id, @RequestBody @Valid ProductsDTO dto)
+	{
+		return productsService.updateProduct(id, dto);
+	}
+	
+	@GetMapping(value ="/list/{id}")
+	public ResponseEntity<ProductsDTO> listById(@PathVariable("id") Integer id)
+	{
+		return productsService.listById(id);
+	}
 }
