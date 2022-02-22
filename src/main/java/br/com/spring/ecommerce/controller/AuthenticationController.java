@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.spring.ecommerce.dto.TokenDTO;
 import br.com.spring.ecommerce.model.User;
+import br.com.spring.ecommerce.model.UserTokenDetails;
 import br.com.spring.ecommerce.security.AuthenticationService;
 import br.com.spring.ecommerce.service.TokenService;
 
@@ -46,7 +46,7 @@ public class AuthenticationController {
 	}
 	
 	@GetMapping(value ="me")
-	public UserDetails getCurrent() {
+	public UserTokenDetails getCurrent() {
 		return authService.getCurrent();
 	}
 

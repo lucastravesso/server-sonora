@@ -1,7 +1,6 @@
 package br.com.spring.ecommerce.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.spring.ecommerce.model.User;
+import br.com.spring.ecommerce.model.UserTokenDetails;
 import br.com.spring.ecommerce.repository.UserRepository;
 
 @Service
@@ -24,10 +24,16 @@ public class AuthenticationService implements UserDetailsService{
 		return user;
 	}
 	
-	public UserDetails getCurrent() {
+	public UserTokenDetails getCurrent() {
 
-		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return (UserDetails) authentication.getPrincipal();
+		UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+		User user = repository.findByEmail(userDetails.getUsername()).get();
+		return UserTokenDetails.builder()
+				.id(user.getId())
+				.email(user.getEmail())
+				.isEnabled(userDetails.isEnabled())
+				.profiles(user.getProfiles())
+				.build();
 	}
 
 }
