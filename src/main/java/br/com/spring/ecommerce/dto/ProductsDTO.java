@@ -22,8 +22,10 @@ public class ProductsDTO {
 
 	private String prod_builder;
 
-	//private CategoryDTO categoryDto;
-	
+	private CategoryDTO categoryDto;
+
 	//private UserDTO userDto;
+
+
 	
 }

@@ -1,6 +1,6 @@
 package br.com.spring.ecommerce.model;
 
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -39,12 +39,13 @@ public class Products {
 	@Column(name = "prod_produtor")
 	private String prod_builder;
 	
-	@OneToOne(targetEntity = Category.class, cascade = CascadeType.REMOVE, optional = true)
+	@OneToOne(targetEntity = Category.class)
 	@JoinColumn(name = "id_categoria", foreignKey = @ForeignKey(name = "fk_categoria"))
 	private Category category;
 
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))
 	private User user;
+
 	
 }
