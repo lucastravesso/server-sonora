@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import br.com.spring.ecommerce.model.User;
 
@@ -12,10 +13,10 @@ public class UserAuthentication implements Authentication {
 
   private static final long serialVersionUID = -7332640518387098394L;
 
-  private final User user;
+  private final UserDetails user;
   private boolean authenticated = true;
 
-public UserAuthentication(User user) {
+public UserAuthentication(UserDetails user) {
     this.user = user;
   }
   @Override
@@ -33,7 +34,7 @@ public UserAuthentication(User user) {
     return user.getPassword();
   }
   @Override
-  public User getDetails() {
+  public UserDetails getDetails() {
     return user;
   }
 
