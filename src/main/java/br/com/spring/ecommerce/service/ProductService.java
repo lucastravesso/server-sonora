@@ -18,10 +18,14 @@ import org.springframework.stereotype.Service;
 
 import br.com.spring.ecommerce.dto.CategoryDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
+import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.model.Category;
 import br.com.spring.ecommerce.model.Products;
+import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.CategoryRepository;
 import br.com.spring.ecommerce.repository.ProductsRepository;
+import br.com.spring.ecommerce.repository.UserRepository;
+import br.com.spring.ecommerce.security.AuthenticationService;
 
 @Service
 public class ProductService {
@@ -33,16 +37,22 @@ public class ProductService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 	
+	@Autowired
+	private AuthenticationService authService;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
 	private Mapper mapper = new DozerBeanMapper();
 	
 	public ResponseEntity<Products> insertProduct(ProductsDTO dto)
 	{
 		Products products = mapper.map(dto, Products.class);
-		//User user = mapper.map(dto.getUserDto(), User.class);
+		User user = mapper.map(dto.getUserDto(), User.class);
 		Category category = mapper.map(dto.getCategoryDto(), Category.class);
 		
 		products.setCategory(category);
-		//products.setUser(user);
+		products.setUser(user);
 		
 		productsRepository.save(products);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -55,6 +65,8 @@ public class ProductService {
 		return products.stream().map(u ->{
 			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
 			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
+			UserDTO uDto = mapper.map(u.getUser(), UserDTO.class);
+			dto.setUserDto(uDto);
 			dto.setCategoryDto(cDto);
 			return dto;
 		}).collect(Collectors.toList());
@@ -83,6 +95,24 @@ public class ProductService {
 			}
 		}
 		return ResponseEntity.notFound().build();
+	}
+	
+	public List<ProductsDTO> listAllByUserId()
+	{
+		
+		User user = userRepository.findOneById((authService.getCurrent()).getId());
+		
+		List<Products> products = productsRepository.findByUserId(user);
+		
+		return products.stream().map(p -> {
+			
+			ProductsDTO pDto = mapper.map(p, ProductsDTO.class);
+			CategoryDTO cGto = mapper.map(p.getCategory(), CategoryDTO.class);
+			pDto.setCategoryDto(cGto);
+			
+			return pDto;
+			
+		}).collect(Collectors.toList());
 	}
 	
 

@@ -8,4 +8,5 @@ import br.com.spring.ecommerce.model.Address;
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Integer>{
 
+	
 }

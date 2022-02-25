@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.spring.ecommerce.dto.UserDTO;
+import br.com.spring.ecommerce.dto.UserWithoutAddressDTO;
 import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.service.UserService;
 
@@ -33,10 +34,22 @@ public class UserController {
 		return userService.insertUser(dto);
 	}
 	
+	@PostMapping(value = "/registerNoAddress")
+	public ResponseEntity<User> insertUser(@RequestBody @Valid UserWithoutAddressDTO dto)
+	{
+		return userService.insertUserWithoutAddress(dto);
+	}
+	
 	@GetMapping(value = "/list")
 	public List<UserDTO> listAll()
 	{
 		return userService.listAll();
+	}
+	
+	@GetMapping(value = "/findByToken")
+	public ResponseEntity<UserDTO> findOneByToken()
+	{
+		return userService.findUserByToken();
 	}
 	
 	@DeleteMapping(value ="/delete/{id}")

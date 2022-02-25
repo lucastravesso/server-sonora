@@ -33,7 +33,7 @@ public class AuthenticationService implements UserDetailsService{
 				.email(user.getEmail())
 				.isEnabled(userDetails.isEnabled())
 				.profiles(user.getProfiles())
-				.build();
+				.build(); 
 	}
 
 }

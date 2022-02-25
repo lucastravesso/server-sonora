@@ -56,4 +56,12 @@ public class ProductsController {
 	{
 		return productsService.listById(id);
 	}
+	
+	@GetMapping(value ="/listBy")
+	public List<ProductsDTO> listAllByUserId()
+	{
+		return productsService.listAllByUserId();
+	}
+	
+	
 }

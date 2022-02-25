@@ -24,7 +24,7 @@ public class ProductsDTO {
 
 	private CategoryDTO categoryDto;
 
-	//private UserDTO userDto;
+	private UserDTO userDto;
 
 
 	
