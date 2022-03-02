@@ -1,5 +1,6 @@
 package br.com.spring.ecommerce.service;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import br.com.spring.ecommerce.security.AuthenticationService;
 
 @Service
 public class UserService {
+	
 
 	@Autowired
 	private UserRepository userRepository;
@@ -46,7 +48,7 @@ public class UserService {
 	private Mapper mapper = new DozerBeanMapper();
 	
 	public ResponseEntity<User> insertUser(UserDTO dto)
-	{
+	{		
 		User user = new User();
 		Address address = new Address();
 		
@@ -81,7 +83,7 @@ public class UserService {
 		
 		if(Objects.nonNull(user))
 		{
-			BeanUtils.copyProperties(user, uDto, "password");
+			BeanUtils.copyProperties(user, uDto);
 			
 			if(Objects.nonNull(user.getAddress()))
 			{
@@ -134,9 +136,7 @@ public class UserService {
 
 		if (user.isPresent()) {
 
-			BeanUtils.copyProperties(dto, user.get(), "password", "id");
-
-			user.get().setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
+			BeanUtils.copyProperties(dto, user.get(),"password", "id");
 
 			if (Objects.isNull(user.get().getAddress()) && Objects.nonNull(dto.getAddressDto())) {
 
@@ -144,6 +144,7 @@ public class UserService {
 				BeanUtils.copyProperties(dto.getAddressDto(), address, "id");
 				addressRepository.save(address);
 				user.get().setAddress(address);
+				userRepository.save(user.get());
 
 			} else if (Objects.nonNull(dto.getAddressDto().getId())) {
 
