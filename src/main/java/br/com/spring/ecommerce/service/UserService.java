@@ -146,20 +146,22 @@ public class UserService {
 				user.get().setAddress(address);
 				userRepository.save(user.get());
 
-			} else if (Objects.nonNull(dto.getAddressDto().getId())) {
+			} else if (Objects.nonNull(dto.getAddressDto())) {
+				
+				if (dto.getAddressDto().getCity().equals(user.get().getAddress().getCity())) {
 
-				if (dto.getAddressDto().getId().equals(user.get().getAddress().getId())) {
-
-					BeanUtils.copyProperties(dto.getAddressDto(), user.get().getAddress());
+					BeanUtils.copyProperties(dto.getAddressDto(), user.get().getAddress(), "id");
+					addressRepository.save(user.get().getAddress());
+					userRepository.save(user.get());
+	
 
 				} else {
 
-					Optional<Address> address = addressRepository.findById(dto.getAddressDto().getId());
-					
-					if (address.isPresent()) {
+
+					if (Objects.nonNull(user.get().getAddress().getId())) {
 						
-						BeanUtils.copyProperties(dto.getAddressDto(), address.get());
-						user.get().setAddress(address.get());
+						BeanUtils.copyProperties(dto.getAddressDto(), user.get().getAddress(), "id");
+						addressRepository.save(user.get().getAddress());
 						
 					} else {
 						
