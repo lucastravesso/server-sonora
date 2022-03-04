@@ -28,6 +28,7 @@ import br.com.spring.ecommerce.repository.AddressRepository;
 import br.com.spring.ecommerce.repository.ProfileRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
+import br.com.spring.ecommerce.util.FormatDate;
 
 @Service
 public class UserService {
@@ -51,7 +52,7 @@ public class UserService {
 	{		
 		User user = new User();
 		Address address = new Address();
-		
+	
 		BeanUtils.copyProperties(dto, user, "password");
 		BeanUtils.copyProperties(dto.getAddressDto(), address);
 		
@@ -79,12 +80,13 @@ public class UserService {
 	public ResponseEntity<UserDTO> findUserByToken(){
 	
 		UserDTO uDto = new UserDTO();
-		User user = userRepository.findOneById(authService.getCurrent().getId());
+		User user = userRepository.findOneById(authService.getCurrent().getId());		
 		
 		if(Objects.nonNull(user))
 		{
-			BeanUtils.copyProperties(user, uDto);
 			
+			BeanUtils.copyProperties(user, uDto);
+			uDto.setBorn(FormatDate.convertDateToString(user.getBorn()));
 			if(Objects.nonNull(user.getAddress()))
 			{
 				AddressDTO aDto = new AddressDTO();
@@ -130,11 +132,13 @@ public class UserService {
 
 	}
 	
-	public ResponseEntity<?> updateUser(Integer id, UserDTO dto)
+	public ResponseEntity<?> updateUser(Integer id, UserDTO dto) throws ParseException
 	{
 		Optional<User> user = userRepository.findById(id);
-
+		
 		if (user.isPresent()) {
+			
+			user.get().setBorn(FormatDate.convertStringToDate(dto.getBorn()));
 
 			BeanUtils.copyProperties(dto, user.get(),"password", "id");
 

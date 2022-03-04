@@ -1,5 +1,6 @@
 package br.com.spring.ecommerce.controller;
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -59,7 +60,7 @@ public class UserController {
 	}
 	
 	@PutMapping(value ="/update/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,@RequestBody @Valid UserDTO dto)
+	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,@RequestBody @Valid UserDTO dto) throws ParseException
 	{
 		return userService.updateUser(id, dto);
 	}

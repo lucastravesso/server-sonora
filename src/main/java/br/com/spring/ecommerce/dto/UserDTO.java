@@ -25,7 +25,7 @@ public class UserDTO {
 
 	private String rg;
 
-	private Date born;
+	private String born;
 	
 	private Date register;
 
@@ -36,5 +36,4 @@ public class UserDTO {
 	private AddressDTO addressDto;
 	
 	private Set<Profile> profile;
-	
 }
