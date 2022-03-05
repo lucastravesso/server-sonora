@@ -34,6 +34,6 @@ public class UserDTO {
 	private String password;
 	
 	private AddressDTO addressDto;
-	
+		
 	private Set<Profile> profile;
 }
