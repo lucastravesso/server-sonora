@@ -1,7 +1,5 @@
 package br.com.spring.ecommerce.dto;
 
-import java.util.Date;
-
 import javax.validation.constraints.NotNull;
 
 import br.com.spring.ecommerce.model.User;
@@ -28,7 +26,7 @@ public class CardDTO {
 	private String card_number;
 	
 	@NotNull
-	private Date card_valid;
+	private String card_valid;
 	
 	private User user;
 }

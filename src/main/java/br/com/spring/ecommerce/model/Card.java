@@ -1,8 +1,5 @@
 package br.com.spring.ecommerce.model;
 
-import java.util.Date;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -42,7 +39,7 @@ public class Card {
 	private String card_number;
 	
 	@Column(name = "c_validade")
-	private Date card_valid;
+	private String card_valid;
 	
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))

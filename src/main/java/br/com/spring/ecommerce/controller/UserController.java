@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import javax.security.auth.login.AccountNotFoundException;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ public class UserController {
 		return userService.delete(id);
 	}
 	
+	@Transactional
 	@PutMapping(value ="/update/{id}")
 	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,@RequestBody @Valid UserDTO dto) throws ParseException
 	{
