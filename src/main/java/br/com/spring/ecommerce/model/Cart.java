@@ -1,49 +1,44 @@
 package br.com.spring.ecommerce.model;
 
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.DynamicUpdate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Table(name = "produtos")
 @Entity
-public class Products {
+@DynamicUpdate
+@Table(name = "Carrinho")
+public class Cart {
 
 	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
-	@Column(name = "id_produto")
+	@Column(name = "id_carrinho")
 	private Integer id;
 	
-	@Column(name ="prod_nome")
-	private String prod_name;
+	@OneToMany(fetch = FetchType.LAZY)
+	private Set<Products> product;
 	
-	@Column(name = "prod_preco")
-	private Double prod_price;
+	@OneToOne(targetEntity = User.class)
+	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))
+	private User user;
 	
-	@Column(name = "prod_spec")
-	private String prod_spec;
 	
-	@Column(name = "prod_produtor")
-	private String prod_builder;
-	
-	@Column(name = "prod_quantidade")
-	private Integer prod_quantity;
-	
-	@OneToOne(targetEntity = Category.class)
-	@JoinColumn(name = "id_categoria", foreignKey = @ForeignKey(name = "fk_categoria"))
-	private Category category;
-
 }

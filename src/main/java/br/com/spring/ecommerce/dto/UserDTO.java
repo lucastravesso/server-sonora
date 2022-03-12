@@ -23,7 +23,9 @@ public class UserDTO {
 
 	private String cpf;
 
-	private String rg;
+	private String rg; 
+	
+	private String phone;
 
 	private String born;
 	

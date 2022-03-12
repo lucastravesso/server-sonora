@@ -54,6 +54,9 @@ public class User implements UserDetails{
 	@Column(name = "usu_rg")
 	private String rg;
 	
+	@Column(name = "usu_telefone")
+	private String phone;
+	
 	@Column(name = "usu_dt_nasc")
 	private Date born;
 	
@@ -65,7 +68,6 @@ public class User implements UserDetails{
 	
 	@Column(name = "usu_senha")
 	protected String password;
-	
 	
 	@OneToOne(targetEntity = Address.class, cascade = CascadeType.REMOVE, optional = true)
 	@JoinColumn(name = "id_endereco", foreignKey = @ForeignKey(name = "fk_endereco"))

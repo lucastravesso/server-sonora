@@ -32,6 +32,9 @@ public class UserWithoutAddressDTO {
 	private String rg;
 
 	@NotNull
+	private String phone;
+	
+	@NotNull
 	private Date born;
 	
 	private Date register;

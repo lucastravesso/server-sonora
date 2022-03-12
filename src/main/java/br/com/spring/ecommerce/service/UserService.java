@@ -22,9 +22,11 @@ import br.com.spring.ecommerce.dto.AddressDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.dto.UserWithoutAddressDTO;
 import br.com.spring.ecommerce.model.Address;
+import br.com.spring.ecommerce.model.Cart;
 import br.com.spring.ecommerce.model.Profile;
 import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.AddressRepository;
+import br.com.spring.ecommerce.repository.CartRepository;
 import br.com.spring.ecommerce.repository.ProfileRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
@@ -36,6 +38,9 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private CartRepository cartRepository;
 	
 	@Autowired
 	private AddressRepository addressRepository;
@@ -52,15 +57,20 @@ public class UserService {
 	{		
 		User user = new User();
 		Address address = new Address();
-	
+		Cart cart = new Cart();
+		
 		BeanUtils.copyProperties(dto, user, "password");
 		BeanUtils.copyProperties(dto.getAddressDto(), address);
 		
 		user.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
 		user.setAddress(address);
-		
+
 		addressRepository.save(address);
 		userRepository.save(user);
+		
+		cart.setUser(user);
+		cartRepository.save(cart);
+		
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
