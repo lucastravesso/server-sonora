@@ -1,6 +1,7 @@
 package br.com.spring.ecommerce.model;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +35,7 @@ public class Cart {
 	private Integer id;
 	
 	@OneToMany(fetch = FetchType.LAZY)
-	private Set<Products> product;
+	private List<Products> product = new ArrayList<>();
 	
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))

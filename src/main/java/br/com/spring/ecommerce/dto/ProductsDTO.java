@@ -1,6 +1,5 @@
 package br.com.spring.ecommerce.dto;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -29,7 +28,6 @@ public class ProductsDTO {
 	@NotNull
 	private String prod_builder;
 
-	@NotEmpty
 	private Integer prod_quantity;
 	
 	@NotNull

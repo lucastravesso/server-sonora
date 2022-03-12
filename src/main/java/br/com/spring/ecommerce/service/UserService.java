@@ -68,6 +68,10 @@ public class UserService {
 		addressRepository.save(address);
 		userRepository.save(user);
 		
+		List<Profile> profile = profileRepository.findAll();
+		Set<Profile> role = profile.stream().filter(p -> p.getName().equals("COMPRADOR")).collect(Collectors.toSet());
+		user.setProfiles(role);
+		
 		cart.setUser(user);
 		cartRepository.save(cart);
 		
@@ -77,6 +81,8 @@ public class UserService {
 	public ResponseEntity<User> insertUserWithoutAddress(UserWithoutAddressDTO dto)
 	{
 		User user = mapper.map(dto, User.class);
+		Cart cart = new Cart();
+
 		user.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
 		
 		List<Profile> profile = profileRepository.findAll();
@@ -84,6 +90,9 @@ public class UserService {
 		user.setProfiles(role);
 		
 		userRepository.save(user);
+		
+		cart.setUser(user);
+		cartRepository.save(cart);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
