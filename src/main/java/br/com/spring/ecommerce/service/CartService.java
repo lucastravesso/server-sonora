@@ -1,11 +1,17 @@
 package br.com.spring.ecommerce.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.spring.ecommerce.dto.CartProductsDTO;
+import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.model.Cart;
 import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
@@ -46,9 +52,49 @@ public class CartService {
 		return ResponseEntity.notFound().build();
 	}
 	
-	public ResponseEntity<?> removeFromCart(Integer id)
+	public ResponseEntity<Products> removeFromCart(Integer id)
 	{
+		User user = userRepository.findOneById(authService.getCurrent().getId());
+		
+		Cart cart = cartRepository.findByUserId(user.getId());
+		
+		Optional<Products> product = productsRepository.findById(id);
+
+		cart.getProduct().remove(product.get());
+		cartRepository.save(cart);
+		
 		return ResponseEntity.ok().build();
+	}
+	
+	public List<CartProductsDTO> findAllProductsByCartId()
+	{
+		User user = userRepository.findOneById(authService.getCurrent().getId());
+		Cart cart = cartRepository.findByUserId(user.getId());
+		
+		List<CartProductsDTO> list = new ArrayList<>();
+		ProductsDTO prodDTO = new ProductsDTO();
+		List<ProductsDTO> prodList = new ArrayList<>();
+		
+		cart.getProduct().forEach(p ->{
+			BeanUtils.copyProperties(p, prodDTO);
+			prodList.add(prodDTO);
+		});
+		
+		prodList.forEach(p ->{
+			List<ProductsDTO> qntd = new ArrayList<>();
+			CartProductsDTO dto = new CartProductsDTO();
+			qntd = prodList.stream().filter(c -> c.getId().equals(p.getId())).collect(Collectors.toList());
+	
+			if(!list.contains(dto))
+			{
+				list.add(dto);
+			}
+			
+			dto.setQuantity(qntd.size());
+			dto.setProductDTO(p);
+		});	
+		
+		return list;
 	}
 	
 	
