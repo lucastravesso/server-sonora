@@ -1,5 +1,7 @@
 package br.com.spring.ecommerce.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class CartProductsDTO {
+public class CartTotalPriceDTO {
 	
-	private ProductsDTO productDTO;
+	List<CartProductsDTO> cartProducts;
 	
-	private Integer quantity;
+	Double totalPrice;
 	
-	private Double price;
+	Integer total;
 }

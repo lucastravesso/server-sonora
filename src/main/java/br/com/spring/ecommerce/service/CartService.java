@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.spring.ecommerce.dto.CartProductsDTO;
+import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.model.Cart;
 import br.com.spring.ecommerce.model.Products;
@@ -19,6 +21,7 @@ import br.com.spring.ecommerce.repository.CartRepository;
 import br.com.spring.ecommerce.repository.ProductsRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
+import br.com.spring.ecommerce.util.FormatPrice;
 
 @Service
 public class CartService {
@@ -66,35 +69,56 @@ public class CartService {
 		return ResponseEntity.ok().build();
 	}
 	
-	public List<CartProductsDTO> findAllProductsByCartId()
+	public CartTotalPriceDTO findAllProductsByCartId()
 	{
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		Cart cart = cartRepository.findByUserId(user.getId());
 		
-		List<CartProductsDTO> list = new ArrayList<>();
-		ProductsDTO prodDTO = new ProductsDTO();
+		List<CartProductsDTO> cartList = new ArrayList<>();
 		List<ProductsDTO> prodList = new ArrayList<>();
 		
 		cart.getProduct().forEach(p ->{
+			
+			ProductsDTO prodDTO = new ProductsDTO();
 			BeanUtils.copyProperties(p, prodDTO);
 			prodList.add(prodDTO);
 		});
 		
 		prodList.forEach(p ->{
+			
 			List<ProductsDTO> qntd = new ArrayList<>();
 			CartProductsDTO dto = new CartProductsDTO();
 			qntd = prodList.stream().filter(c -> c.getId().equals(p.getId())).collect(Collectors.toList());
-	
-			if(!list.contains(dto))
-			{
-				list.add(dto);
-			}
-			
 			dto.setQuantity(qntd.size());
 			dto.setProductDTO(p);
+			
+			if(!cartList.contains(dto))
+			{
+				cartList.add(dto);
+			}
 		});	
 		
-		return list;
+		cartList.forEach(l -> {
+			
+			l.setPrice(FormatPrice.getPrice(l.getProductDTO().getProd_price() * l.getQuantity()));
+		});
+		
+		CartTotalPriceDTO ctPrice = new CartTotalPriceDTO();
+		
+		ctPrice.setCartProducts(cartList);
+		
+		ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList)); 
+		
+		if(CollectionUtils.isNotEmpty(cartList)) {
+			
+			ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList)); 
+		
+		} else {
+			
+			ctPrice.setTotalPrice(0.00);
+		}
+		
+		return ctPrice;
 	}
 	
 	
