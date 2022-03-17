@@ -1,6 +1,7 @@
 package br.com.spring.ecommerce.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -36,17 +37,20 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_pedido")
 	private Integer id;
+	
+	@Column(name = "hora_pedido")
+	private Date orderDate;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status_pedido")
+	private PurchaseStatus status;
+	
 	@ManyToMany
 	@JoinTable(name = "produtos_pedidos", joinColumns = {
 			@JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido") }, inverseJoinColumns = {
 					@JoinColumn(name = "id_produto", referencedColumnName = "id_produto") })
 	private List<Products> products = new ArrayList<>();
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status_pedido")
-	private PurchaseStatus status;
-	
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))
 	private User user;

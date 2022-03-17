@@ -43,5 +43,6 @@ public class Cart {
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))
 	private User user;
+	
 
 }
