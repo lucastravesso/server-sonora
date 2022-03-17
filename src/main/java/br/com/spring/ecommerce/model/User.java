@@ -76,6 +76,10 @@ public class User implements UserDetails{
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Profile> profiles = new HashSet<>();
 
+	@OneToOne(targetEntity = Cart.class, cascade = CascadeType.ALL)
+	@JoinColumn(name = "id_carrinho", foreignKey = @ForeignKey(name = "fk_carrinho"))
+	private Cart cart;
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub

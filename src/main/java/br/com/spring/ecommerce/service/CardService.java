@@ -9,6 +9,7 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,18 @@ public class CardService {
 			
 			return dto;
 		}).collect(Collectors.toList());
+	}
+	
+	public ResponseEntity<CardDTO> findById(Integer id)
+	{
+		Optional<Card> card = cardRepository.findById(id);
+		CardDTO dto = new CardDTO();
+		
+		if(card.isPresent()) {
+			BeanUtils.copyProperties(card.get(), dto, "user");
+			return ResponseEntity.ok(dto);
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 	
 	public List<CardDTO> findAllById()

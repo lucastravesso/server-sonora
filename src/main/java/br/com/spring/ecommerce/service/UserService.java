@@ -1,6 +1,7 @@
 package br.com.spring.ecommerce.service;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +27,6 @@ import br.com.spring.ecommerce.model.Cart;
 import br.com.spring.ecommerce.model.Profile;
 import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.AddressRepository;
-import br.com.spring.ecommerce.repository.CartRepository;
 import br.com.spring.ecommerce.repository.ProfileRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
@@ -38,9 +38,6 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
-	@Autowired
-	private CartRepository cartRepository;
 	
 	@Autowired
 	private AddressRepository addressRepository;
@@ -64,16 +61,14 @@ public class UserService {
 		
 		user.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
 		user.setAddress(address);
+		user.setCart(cart);		
 
-		addressRepository.save(address);
-		userRepository.save(user);
-		
 		List<Profile> profile = profileRepository.findAll();
 		Set<Profile> role = profile.stream().filter(p -> p.getName().equals("COMPRADOR")).collect(Collectors.toSet());
 		user.setProfiles(role);
 		
-		cart.setUser(user);
-		cartRepository.save(cart);
+		addressRepository.save(address);
+		userRepository.save(user);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -87,12 +82,14 @@ public class UserService {
 		
 		List<Profile> profile = profileRepository.findAll();
 		Set<Profile> role = profile.stream().filter(p -> p.getName().equals("COMPRADOR")).collect(Collectors.toSet());
-		user.setProfiles(role);
+		user.setProfiles(role);		
+		
+		user.setCart(cart);	
+		cart.setUser(user);
+		user.setRegister(new Date());
 		
 		userRepository.save(user);
-		
-		cart.setUser(user);
-		cartRepository.save(cart);
+
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	

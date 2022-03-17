@@ -33,6 +33,12 @@ public class CardController {
 		return cardService.insertCard(dto);
 	}
 	
+	@GetMapping("/find/{id}")
+	public ResponseEntity<CardDTO> findById(@PathVariable("id") Integer id)
+	{
+		return cardService.findById(id);
+	}
+	
 	@GetMapping("/listall")
 	public List<CardDTO> findAll(){
 		return cardService.findAll();

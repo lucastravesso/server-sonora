@@ -41,15 +41,13 @@ public class CartService {
 	public ResponseEntity<Products> addProductToCart(Integer id){
 		
 		User user = userRepository.findOneById(authService.getCurrent().getId());
-		
-		Cart cart = cartRepository.findByUserId(user.getId());
 
 		Optional<Products> product = productsRepository.findById(id);
 						
 		if(product.isPresent() && product.get().getProd_quantity() > 0)
 		{
-			cart.getProduct().add(product.get());
-			cartRepository.save(cart);
+			user.getCart().getProduct().add(product.get());
+			cartRepository.save(user.getCart());
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.notFound().build();
@@ -59,12 +57,10 @@ public class CartService {
 	{
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		
-		Cart cart = cartRepository.findByUserId(user.getId());
-		
 		Optional<Products> product = productsRepository.findById(id);
 
-		cart.getProduct().remove(product.get());
-		cartRepository.save(cart);
+		user.getCart().getProduct().remove(product.get());
+		cartRepository.save(user.getCart());
 		
 		return ResponseEntity.ok().build();
 	}
@@ -72,7 +68,7 @@ public class CartService {
 	public CartTotalPriceDTO findAllProductsByCartId()
 	{
 		User user = userRepository.findOneById(authService.getCurrent().getId());
-		Cart cart = cartRepository.findByUserId(user.getId());
+		Cart cart = user.getCart();
 		
 		List<CartProductsDTO> cartList = new ArrayList<>();
 		List<ProductsDTO> prodList = new ArrayList<>();
@@ -108,6 +104,10 @@ public class CartService {
 		ctPrice.setCartProducts(cartList);
 		
 		ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList)); 
+		
+		Integer total = cartList.stream().map(x -> x.getQuantity()).reduce((x,y) -> x+y).orElse(0);
+		
+		ctPrice.setTotal(total);
 		
 		if(CollectionUtils.isNotEmpty(cartList)) {
 			
