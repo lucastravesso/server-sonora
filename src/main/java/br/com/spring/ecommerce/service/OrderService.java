@@ -3,15 +3,20 @@ package br.com.spring.ecommerce.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.model.Order;
 import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
@@ -56,11 +61,49 @@ public class OrderService {
 			
 			return ResponseEntity.ok().build();
 		}
-		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-
-		
 	}
 	
+	public List<OrderDTO> listAll(){
+		
+		List<Order> order = orderRepository.findAll();
+		
+		return order.stream().map(o -> {
+			
+			OrderDTO dto = new OrderDTO();
+			
+			BeanUtils.copyProperties(o, dto);
+			
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
+	public List<OrderDTO> listAllByUserId(){
+			
+			User user = userRepository.findOneById(authService.getCurrent().getId());
+		
+			List<Order> order = orderRepository.findAllByUserId(user.getId());
+			
+			return order.stream().map(o -> {
+				
+				OrderDTO dto = new OrderDTO();
+				
+				BeanUtils.copyProperties(o, dto);
+				
+				return dto;
+			}).collect(Collectors.toList());
+		}
+	public ResponseEntity<OrderDTO> findOrderById(Integer id) {
+		
+		Order order = orderRepository.findOneById(id);
+
+		if(Objects.nonNull(order)) {
+			OrderDTO dto = new OrderDTO();
+			BeanUtils.copyProperties(order, dto, "user");
+			return ResponseEntity.ok(dto);
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		
+	}
 	
 }
