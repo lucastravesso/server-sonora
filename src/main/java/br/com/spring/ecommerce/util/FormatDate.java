@@ -9,7 +9,7 @@ public class FormatDate {
 	static public final String convertDateToString(Date date) {
 		
 		SimpleDateFormat sdt = new SimpleDateFormat();
-		sdt.applyPattern("yyyy-MM-dd");
+		sdt.applyPattern("dd-MM-yyyy");
 		return sdt.format(date);
 	}
 	

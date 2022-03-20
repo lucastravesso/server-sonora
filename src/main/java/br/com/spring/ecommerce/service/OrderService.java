@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -23,6 +22,7 @@ import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.OrderRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
+import br.com.spring.ecommerce.util.FormatDate;
 import br.com.spring.ecommerce.util.PurchaseStatus;
 
 @Service
@@ -90,6 +90,8 @@ public class OrderService {
 				
 				BeanUtils.copyProperties(o, dto);
 				
+				dto.setOrderDate(FormatDate.convertDateToString(o.getOrderDate()));
+				
 				return dto;
 			}).collect(Collectors.toList());
 		}
@@ -100,6 +102,7 @@ public class OrderService {
 		if(Objects.nonNull(order)) {
 			OrderDTO dto = new OrderDTO();
 			BeanUtils.copyProperties(order, dto, "user");
+			dto.setOrderDate(FormatDate.convertDateToString(order.getOrderDate()));
 			return ResponseEntity.ok(dto);
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

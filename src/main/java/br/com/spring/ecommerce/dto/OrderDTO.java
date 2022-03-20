@@ -1,6 +1,5 @@
 package br.com.spring.ecommerce.dto;
 
-import java.util.Date;
 import java.util.List;
 
 import br.com.spring.ecommerce.model.Products;
@@ -19,7 +18,7 @@ public class OrderDTO {
 
 	private Integer id;
 	
-	private Date orderDate;
+	private String orderDate;
 
 	private PurchaseStatus status;
 	
