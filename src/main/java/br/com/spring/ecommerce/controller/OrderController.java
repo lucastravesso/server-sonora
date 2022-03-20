@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.service.OrderService;
 
@@ -40,5 +41,11 @@ public class OrderController {
 	public ResponseEntity<OrderDTO> findById(@PathVariable("id") Integer id){
 		return orderService.findOrderById(id);
 	}
+	
+	@GetMapping(value = "/prod/{id}")
+	public CartTotalPriceDTO findOrderById(@PathVariable("id") Integer id){
+		return orderService.findAllProductsByCartId(id);
+	}
+	
 	
 }

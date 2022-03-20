@@ -15,7 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.spring.ecommerce.dto.CartProductsDTO;
+import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
+import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.model.Order;
 import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
@@ -23,6 +26,7 @@ import br.com.spring.ecommerce.repository.OrderRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
 import br.com.spring.ecommerce.util.FormatDate;
+import br.com.spring.ecommerce.util.FormatPrice;
 import br.com.spring.ecommerce.util.PurchaseStatus;
 
 @Service
@@ -108,5 +112,64 @@ public class OrderService {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		
 	}
+	
+	
+	public CartTotalPriceDTO findAllProductsByCartId(Integer id)
+	{
+		Order order = orderRepository.findOneById(id);
+		
+		List<CartProductsDTO> cartList = new ArrayList<>();
+		List<ProductsDTO> prodList = new ArrayList<>();
+		
+		
+		order.getProducts().forEach(p ->{
+			
+			ProductsDTO prodDTO = new ProductsDTO();
+			BeanUtils.copyProperties(p, prodDTO);
+			prodList.add(prodDTO);
+		});
+		
+		prodList.forEach(p ->{
+			
+			List<ProductsDTO> qntd = new ArrayList<>();
+			CartProductsDTO dto = new CartProductsDTO();
+			qntd = prodList.stream().filter(c -> c.getId().equals(p.getId())).collect(Collectors.toList());
+			dto.setQuantity(qntd.size());
+			dto.setProductDTO(p);
+			
+			if(!cartList.contains(dto))
+			{
+				cartList.add(dto);
+			}
+		});	
+		
+		cartList.forEach(l -> {
+			
+			l.setPrice(FormatPrice.getPrice(l.getProductDTO().getProd_price() * l.getQuantity()));
+		});
+		
+		CartTotalPriceDTO ctPrice = new CartTotalPriceDTO();
+		
+		ctPrice.setCartProducts(cartList);
+		
+		ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList)); 
+		
+		Integer total = cartList.stream().map(x -> x.getQuantity()).reduce((x,y) -> x+y).orElse(0);
+		
+		ctPrice.setTotal(total);
+		
+		if(CollectionUtils.isNotEmpty(cartList)) {
+			
+			ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList)); 
+		
+		} else {
+			
+			ctPrice.setTotalPrice(0.00);
+		}
+		
+		return ctPrice;
+	}
+	
+	
 	
 }
