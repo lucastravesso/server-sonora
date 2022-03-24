@@ -57,5 +57,13 @@ public class ProductsController {
 		return productsService.listById(id);
 	}
 
+	@GetMapping(value = "/listall/{nome}")
+	public List<ProductsDTO> listAllByName(@PathVariable("nome") String nome){
+		return productsService.listAllByName(nome);
+	}
 	
+	@GetMapping(value = "/listallcategory/{id}")
+	public List<ProductsDTO> listAllByCategory(@PathVariable("id") Integer id){
+		return productsService.listAllByCategory(id);
+	}
 }

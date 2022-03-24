@@ -58,6 +58,28 @@ public class ProductService {
 		}).collect(Collectors.toList());
 	}
 	
+	public List<ProductsDTO> listAllByName(String nome){
+		List<Products> products = productsRepository.findByName(nome);
+		
+		return products.stream().map(u ->{
+			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
+			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
+			dto.setCategoryDto(cDto);
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
+	public List<ProductsDTO> listAllByCategory(Integer id){
+		List<Products> products = productsRepository.findAllByCategory_Id(id);
+		
+		return products.stream().map(u ->{
+			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
+			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
+			dto.setCategoryDto(cDto);
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
 	public ResponseEntity<ProductsDTO> listById(Integer id) 
 	{
 		Optional<Products> product = productsRepository.findById(id);
