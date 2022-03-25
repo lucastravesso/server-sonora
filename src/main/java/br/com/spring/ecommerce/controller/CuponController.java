@@ -45,8 +45,14 @@ public class CuponController {
 		return cuponService.listOne(id);
 	}
 	
+	@GetMapping(value = "/listname/{name}")
+	private ResponseEntity<CuponDTO> findOneByName(@PathVariable("name") String name)
+	{
+		return cuponService.listOneByName(name);
+	}
+	
 	@PutMapping(value = "/update/{id}")
-	private ResponseEntity<?> updateCupon(@PathVariable("id") Integer id, @RequestBody @Valid CuponDTO dto)
+	private ResponseEntity<?> updateCupon(@PathVariable("id") Integer id, @RequestBody @Valid CuponDTO dto) throws ParseException
 	{
 		return cuponService.updateCupon(id, dto);
 	}

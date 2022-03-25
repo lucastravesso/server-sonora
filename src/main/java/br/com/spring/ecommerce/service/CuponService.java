@@ -2,6 +2,7 @@ package br.com.spring.ecommerce.service;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,13 +40,15 @@ public class CuponService {
 	}
 	
 	@Transactional
-	public ResponseEntity<?> updateCupon(Integer id, CuponDTO dto)
+	public ResponseEntity<?> updateCupon(Integer id, CuponDTO dto) throws ParseException
 	{
 		Optional<Cupon> cupon = cuponRepository.findById(id);
 		
 		if(cupon.isPresent())
 		{
 			BeanUtils.copyProperties(dto, cupon.get(), "id");
+			cupon.get().setC_register(FormatDate.convertStringToDate(dto.getC_register()));
+			cupon.get().setC_final(FormatDate.convertStringToDate(dto.getC_final()));
 		}else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
@@ -79,6 +82,20 @@ public class CuponService {
 		return dto;
 	}
 	
+	public ResponseEntity<CuponDTO> listOneByName(String name)
+	{
+		Cupon cup = cuponRepository.findByName(name);
+		CuponDTO dto = new CuponDTO();
+		
+		if(Objects.nonNull(cup)) {
+			BeanUtils.copyProperties(cup, dto);
+			dto.setC_register(FormatDate.convertDateToString(cup.getC_register()));
+			dto.setC_final(FormatDate.convertDateToString(cup.getC_final()));
+			return ResponseEntity.ok(dto);
+		}
+		return ResponseEntity.ok().build();		
+	}
+		
 	public ResponseEntity<?> deleteCupon(Integer id){
 	
 		Optional<Cupon> cupon = cuponRepository.findById(id);
@@ -89,7 +106,7 @@ public class CuponService {
 			}else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.ok().build();
 	}
 	
 }
