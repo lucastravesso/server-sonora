@@ -49,7 +49,7 @@ public class ProductService {
 	public List<ProductsDTO> listAll()
 	{
 		List<Products> products = productsRepository.findAll();
-		
+
 		return products.stream().map(u ->{
 			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
 			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);

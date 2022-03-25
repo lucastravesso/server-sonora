@@ -97,7 +97,7 @@ public class UserService {
 	
 		UserDTO uDto = new UserDTO();
 		User user = userRepository.findOneById(authService.getCurrent().getId());		
-		
+				
 		if(Objects.nonNull(user))
 		{
 			
