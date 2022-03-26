@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -18,8 +19,10 @@ import org.springframework.stereotype.Service;
 import br.com.spring.ecommerce.dto.CartProductsDTO;
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
+import br.com.spring.ecommerce.dto.ProductChangeDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.model.Order;
+import br.com.spring.ecommerce.model.ProductChange;
 import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.OrderRepository;
@@ -80,6 +83,18 @@ public class OrderService {
 			
 			return dto;
 		}).collect(Collectors.toList());
+	}
+	
+	@Transactional
+	public ResponseEntity<?> changeStatus(Integer id, OrderDTO dto)
+	{
+		Order order = orderRepository.findOneById(id);
+		
+		order.setStatus(dto.getStatus());
+		
+		orderRepository.save(order);
+		
+		return ResponseEntity.ok().build();
 	}
 	
 	public List<OrderDTO> listAllByUserId(){

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +31,12 @@ public class OrderController {
 	@GetMapping(value = "/findAll")
 	public List<OrderDTO> findAll(){
 		return orderService.listAll();
+	}
+	
+	@PutMapping(value = "/updateStatus")
+	public ResponseEntity<?> changeStatus(@PathVariable("id") Integer id, OrderDTO dto)
+	{
+		return orderService.changeStatus(id, dto);
 	}
 	
 	@GetMapping(value = "/findByUser")
