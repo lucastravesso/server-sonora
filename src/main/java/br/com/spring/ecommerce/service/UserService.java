@@ -173,16 +173,11 @@ public class UserService {
 					BeanUtils.copyProperties(dto.getAddressDto(), user.get().getAddress(), "id");
 					addressRepository.save(user.get().getAddress());
 					userRepository.save(user.get());
-	
-
 				} else {
-
-
 					if (Objects.nonNull(user.get().getAddress().getId())) {
 						
 						BeanUtils.copyProperties(dto.getAddressDto(), user.get().getAddress(), "id");
 						addressRepository.save(user.get().getAddress());
-						
 					} else {
 						
 						Address newAdress = new Address();
@@ -191,12 +186,9 @@ public class UserService {
 						user.get().setAddress(newAdress);
 					}
 				}
-
 			} else {
-
 				user.get().setAddress(null);
 			}
-			
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.notFound().build();

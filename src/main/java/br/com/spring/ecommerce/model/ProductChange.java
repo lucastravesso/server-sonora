@@ -34,6 +34,12 @@ public class ProductChange {
 	@Column(name = "id_troca")
 	private Integer id;
 	
+	@Column(name = "motivo_pedido")
+	private String change_reason;
+	
+	@Column(name = "resposta_pedido")
+	private String change_reply;
+	
 	@Column(name = "hora_pedido")
 	private Date change_date;
 	
