@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,8 +34,8 @@ public class OrderController {
 		return orderService.listAll();
 	}
 	
-	@PutMapping(value = "/updateStatus")
-	public ResponseEntity<?> changeStatus(@PathVariable("id") Integer id, OrderDTO dto)
+	@PutMapping(value = "/updateStatus/{id}")
+	public ResponseEntity<?> changeStatus(@PathVariable("id") Integer id, @RequestBody OrderDTO dto)
 	{
 		return orderService.changeStatus(id, dto);
 	}

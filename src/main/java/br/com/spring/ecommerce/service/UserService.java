@@ -64,7 +64,7 @@ public class UserService {
 		user.setCart(cart);		
 
 		List<Profile> profile = profileRepository.findAll();
-		Set<Profile> role = profile.stream().filter(p -> p.getName().equals("COMPRADOR")).collect(Collectors.toSet());
+		Set<Profile> role = profile.stream().filter(p -> p.getName().equals("ROLE_COMPRADOR")).collect(Collectors.toSet());
 		user.setProfiles(role);
 		
 		addressRepository.save(address);

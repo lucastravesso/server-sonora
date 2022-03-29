@@ -7,6 +7,7 @@ public enum PurchaseStatus {
 	PAGO,
 	PEDIDO_EM_PRODUÇÃO,
 	PEDIDO_ENVIADO,
-	ENTREGUE
+	ENTREGUE,
+	CANCELADO
 	
 }

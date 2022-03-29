@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -78,18 +79,19 @@ public class OrderService {
 			
 			BeanUtils.copyProperties(o, dto);
 			
+			dto.setOrderDate(FormatDate.convertDateToString(o.getOrderDate()));
+			
 			return dto;
 		}).collect(Collectors.toList());
 	}
 	
-	@Transactional
 	public ResponseEntity<?> changeStatus(Integer id, OrderDTO dto)
 	{
-		Order order = orderRepository.findOneById(id);
+		Optional<Order> order = orderRepository.findById(id);
+				
+		order.get().setStatus(dto.getStatus());
 		
-		order.setStatus(dto.getStatus());
-		
-		orderRepository.save(order);
+		orderRepository.save(order.get());
 		
 		return ResponseEntity.ok().build();
 	}
