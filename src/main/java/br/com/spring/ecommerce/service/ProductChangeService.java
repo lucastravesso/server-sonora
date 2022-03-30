@@ -62,6 +62,7 @@ public class ProductChangeService {
 		Optional<ProductChange> pChange = productChangeReposioty.findById(id);
 		
 		pChange.get().setStatus(dto.getStatus());
+		pChange.get().setChange_reply(dto.getChange_reply());
 		
 		productChangeReposioty.save(pChange.get());
 		
