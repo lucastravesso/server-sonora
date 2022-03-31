@@ -65,6 +65,7 @@ public class OrderCancelService {
 		Optional<OrderCancel> oChange = orderCancelRepository.findById(id);
 		
 		oChange.get().setStatus(dto.getStatus());
+		oChange.get().setChange_reply(dto.getChange_reply());
 		
 		orderCancelRepository.save(oChange.get());
 		
