@@ -1,7 +1,8 @@
 package br.com.spring.ecommerce.dto;
 
-import br.com.spring.ecommerce.model.Order;
-import br.com.spring.ecommerce.model.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import br.com.spring.ecommerce.util.ChangeStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
+@JsonInclude(Include.NON_NULL)
 public class OrderCancelDTO {
 
 	private Integer id;
@@ -22,9 +24,9 @@ public class OrderCancelDTO {
 
 	private String change_date;
 
-	private User user;
+	private UserDTO user;
 
-	private Order order;
+	private OrderDTO order;
 
 	private ChangeStatus status;
 

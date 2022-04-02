@@ -2,7 +2,10 @@ package br.com.spring.ecommerce.dto;
 
 import java.util.List;
 
-import br.com.spring.ecommerce.model.Products;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import br.com.spring.ecommerce.model.Cupon;
 import br.com.spring.ecommerce.util.PurchaseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
+@JsonInclude(Include.NON_NULL)
 public class OrderDTO {
 
 
@@ -22,7 +26,7 @@ public class OrderDTO {
 
 	private PurchaseStatus status;
 	
-	private List<Products> products;
+	private List<ProductsDTO> products;
 
-
+	private Cupon cupon;
 }

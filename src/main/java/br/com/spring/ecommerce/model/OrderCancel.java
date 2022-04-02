@@ -33,26 +33,26 @@ public class OrderCancel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_cancelamento")
 	private Integer id;
-	
+
 	@Column(name = "motivo_pedido")
 	private String change_reason;
-	
+
 	@Column(name = "resposta_pedido")
 	private String change_reply;
-	
+
 	@Column(name = "hora_pedido")
 	private Date change_date;
-	
+
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))
 	private User user;
-	
+
 	@OneToOne(targetEntity = Order.class)
 	@JoinColumn(name = "id_pedido", foreignKey = @ForeignKey(name = "fk_pedido"))
 	private Order order;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status_pedido")
 	private ChangeStatus status;
-	
+
 }

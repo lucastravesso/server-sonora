@@ -1,5 +1,6 @@
 package br.com.spring.ecommerce.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.spring.ecommerce.dto.OrderCancelDTO;
+import br.com.spring.ecommerce.dto.OrderDTO;
+import br.com.spring.ecommerce.dto.ProductsDTO;
+import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.model.Order;
 import br.com.spring.ecommerce.model.OrderCancel;
 import br.com.spring.ecommerce.model.User;
@@ -76,11 +80,30 @@ public class OrderCancelService {
 		
 		List<OrderCancel> oChange = orderCancelRepository.findAll();
 
+
+		
 		return oChange.stream().map(p -> {
+			UserDTO user = new UserDTO();
 			OrderCancelDTO dto = new OrderCancelDTO();
+			OrderDTO oDto = new OrderDTO();
 			
-			BeanUtils.copyProperties(p, dto,  "order", "user");
+			List<ProductsDTO> lDto = new ArrayList<>();
 			
+			BeanUtils.copyProperties(p.getOrder(), oDto);
+			BeanUtils.copyProperties(p.getUser(), user);
+			BeanUtils.copyProperties(p, dto);
+			
+			p.getOrder().getProducts().forEach(o -> {
+				ProductsDTO pDto = new ProductsDTO();
+				BeanUtils.copyProperties(o, pDto);
+				lDto.add(pDto);
+			});
+			
+			
+			dto.setOrder(oDto);
+			dto.getOrder().setProducts(lDto);
+			
+			dto.setUser(user);
 			dto.setChange_date(FormatDate.convertDateToString(p.getChange_date()));
 			
 			return dto;

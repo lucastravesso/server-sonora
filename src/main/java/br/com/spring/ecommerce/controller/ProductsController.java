@@ -6,6 +6,9 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +37,9 @@ public class ProductsController {
 	}
 	
 	@GetMapping(value = "/list")
-	public List<ProductsDTO> listAll()
+	public Page<Products> listAll(@PageableDefault(page = 0, size = 3) Pageable page)
 	{
-		return productsService.listAll();
+		return productsService.listAll(page);
 	}
 	
 	@DeleteMapping(value = "/delete/{id}")

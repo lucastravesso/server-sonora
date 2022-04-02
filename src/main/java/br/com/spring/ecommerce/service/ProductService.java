@@ -12,6 +12,8 @@ import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -46,18 +48,12 @@ public class ProductService {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
-	public List<ProductsDTO> listAll()
+	public Page<Products> listAll(Pageable page)
 	{
 		
-		
-		List<Products> products = productsRepository.findAll();
+		Page<Products> products = productsRepository.findAll(page);
 
-		return products.stream().map(u ->{
-			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
-			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
-			dto.setCategoryDto(cDto);
-			return dto;
-		}).collect(Collectors.toList());
+		return products;
 	}
 	
 	public List<ProductsDTO> listAllByName(String nome){

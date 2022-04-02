@@ -2,6 +2,9 @@ package br.com.spring.ecommerce.dto;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
+@JsonInclude(Include.NON_NULL)
 public class ProductsDTO {
-
 
 	private Integer id;
 	
@@ -33,5 +36,4 @@ public class ProductsDTO {
 	@NotNull
 	private CategoryDTO categoryDto;
 
-	
 }
