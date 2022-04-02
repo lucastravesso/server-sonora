@@ -80,8 +80,6 @@ public class OrderCancelService {
 		
 		List<OrderCancel> oChange = orderCancelRepository.findAll();
 
-
-		
 		return oChange.stream().map(p -> {
 			UserDTO user = new UserDTO();
 			OrderCancelDTO dto = new OrderCancelDTO();
@@ -132,11 +130,13 @@ public class OrderCancelService {
 		Optional<OrderCancel> pChange = orderCancelRepository.findById(id);
 		OrderCancelDTO dto = new OrderCancelDTO();
 		
-		BeanUtils.copyProperties(pChange.get(), dto, "order", "user");
-
+		UserDTO uDto = new UserDTO();
 		
-		dto.setChange_date(FormatDate.convertDateToString(pChange.get().getChange_date()));
+		BeanUtils.copyProperties(pChange.get().getUser(), uDto);
+		BeanUtils.copyProperties(pChange.get(), dto, "order");
 
+		dto.setUser(uDto);
+		dto.setChange_date(FormatDate.convertDateToString(pChange.get().getChange_date()));
 		
 		return ResponseEntity.ok(dto);
 		

@@ -17,5 +17,7 @@ public class CartTotalPriceDTO {
 	
 	Double totalPrice;
 	
+	UserDTO user;
+	
 	Integer total;
 }

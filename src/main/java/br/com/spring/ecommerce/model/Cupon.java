@@ -40,4 +40,7 @@ public class Cupon {
 	
 	@Column(name = "cupom_data_fechamento")
 	private Date c_final;
+	
+	@Column(name = "cupom_quantidade")
+	private Integer c_quantity;
 }

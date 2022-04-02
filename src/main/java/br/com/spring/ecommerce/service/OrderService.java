@@ -20,6 +20,7 @@ import br.com.spring.ecommerce.dto.CartProductsDTO;
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
+import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.model.Order;
 import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
@@ -35,155 +36,168 @@ public class OrderService {
 
 	@Autowired
 	private OrderRepository orderRepository;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AuthenticationService authService;
-	
+
 	@Transactional
-	public ResponseEntity<?> createOrder()
-	{
+	public ResponseEntity<?> createOrder() {
 		User user = userRepository.findOneById(authService.getCurrent().getId());
-		Order order = new Order();		
-		
+		Order order = new Order();
+
 		List<Products> prods = new ArrayList<>();
-		
+
 		prods.addAll(user.getCart().getProduct());
-		
-		if(CollectionUtils.isNotEmpty(prods)) {
+
+		if (CollectionUtils.isNotEmpty(prods)) {
 			order.setStatus(PurchaseStatus.PEDIDO_EFETUADO);
 			order.setProducts(prods);
 			order.setUser(user);
-			
+
 			order.setOrderDate(new Date());
-			
+
 			user.getCart().getProduct().clear();
-			
+
 			userRepository.save(user);
 			orderRepository.save(order);
-			
+
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
-	
-	public List<OrderDTO> listAll(){
-		
+
+	public List<OrderDTO> listAll() {
+
 		List<Order> order = orderRepository.findAll();
-		
-		return order.stream().map(o -> {
-			
+
+		return order.stream().map(p -> {
+			UserDTO user = new UserDTO();
 			OrderDTO dto = new OrderDTO();
-			
+
+			List<ProductsDTO> lDto = new ArrayList<>();
+
+			BeanUtils.copyProperties(p.getUser(), user);
+			BeanUtils.copyProperties(p, dto);
+
+			p.getProducts().forEach(o -> {
+				ProductsDTO pDto = new ProductsDTO();
+				BeanUtils.copyProperties(o, pDto);
+				lDto.add(pDto);
+			});
+
+			dto.setProducts(lDto);
+
+			dto.setUser(user);
+			dto.setOrderDate(FormatDate.convertDateToString(p.getOrderDate()));
+
+			return dto;
+		}).collect(Collectors.toList());
+
+	}
+
+	public ResponseEntity<?> changeStatus(Integer id, OrderDTO dto) {
+		Optional<Order> order = orderRepository.findById(id);
+
+		order.get().setStatus(dto.getStatus());
+
+		orderRepository.save(order.get());
+
+		return ResponseEntity.ok().build();
+	}
+
+	public List<OrderDTO> listAllByUserId() {
+
+		User user = userRepository.findOneById(authService.getCurrent().getId());
+
+		List<Order> order = orderRepository.findAllByUserId(user.getId());
+
+		return order.stream().map(o -> {
+
+			OrderDTO dto = new OrderDTO();
+
 			BeanUtils.copyProperties(o, dto);
-			
+
 			dto.setOrderDate(FormatDate.convertDateToString(o.getOrderDate()));
-			
+
 			return dto;
 		}).collect(Collectors.toList());
 	}
-	
-	public ResponseEntity<?> changeStatus(Integer id, OrderDTO dto)
-	{
-		Optional<Order> order = orderRepository.findById(id);
-				
-		order.get().setStatus(dto.getStatus());
-		
-		orderRepository.save(order.get());
-		
-		return ResponseEntity.ok().build();
-	}
-	
-	public List<OrderDTO> listAllByUserId(){
-			
-			User user = userRepository.findOneById(authService.getCurrent().getId());
-		
-			List<Order> order = orderRepository.findAllByUserId(user.getId());
-			
-			return order.stream().map(o -> {
-				
-				OrderDTO dto = new OrderDTO();
-				
-				BeanUtils.copyProperties(o, dto);
-				
-				dto.setOrderDate(FormatDate.convertDateToString(o.getOrderDate()));
-				
-				return dto;
-			}).collect(Collectors.toList());
-		}
+
 	public ResponseEntity<OrderDTO> findOrderById(Integer id) {
-		
+
 		Order order = orderRepository.findOneById(id);
 
-		if(Objects.nonNull(order)) {
+		if (Objects.nonNull(order)) {
+			UserDTO user = new UserDTO();
 			OrderDTO dto = new OrderDTO();
-			BeanUtils.copyProperties(order, dto, "user");
+			BeanUtils.copyProperties(order.getUser(), user);
+			BeanUtils.copyProperties(order, dto);
+			dto.setUser(user);
 			dto.setOrderDate(FormatDate.convertDateToString(order.getOrderDate()));
 			return ResponseEntity.ok(dto);
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		
+
 	}
-	
-	
-	public CartTotalPriceDTO findAllProductsByCartId(Integer id)
-	{
+
+	public CartTotalPriceDTO findAllProductsByCartId(Integer id) {
 		Order order = orderRepository.findOneById(id);
-		
+
 		List<CartProductsDTO> cartList = new ArrayList<>();
 		List<ProductsDTO> prodList = new ArrayList<>();
-		
-		
-		order.getProducts().forEach(p ->{
-			
+		UserDTO uDto = new UserDTO();
+
+		BeanUtils.copyProperties(order.getUser(), uDto, "password");
+
+		order.getProducts().forEach(p -> {
+
 			ProductsDTO prodDTO = new ProductsDTO();
 			BeanUtils.copyProperties(p, prodDTO);
 			prodList.add(prodDTO);
 		});
-		
-		prodList.forEach(p ->{
-			
+
+		prodList.forEach(p -> {
+
 			List<ProductsDTO> qntd = new ArrayList<>();
 			CartProductsDTO dto = new CartProductsDTO();
 			qntd = prodList.stream().filter(c -> c.getId().equals(p.getId())).collect(Collectors.toList());
 			dto.setQuantity(qntd.size());
 			dto.setProductDTO(p);
-			
-			if(!cartList.contains(dto))
-			{
+
+			if (!cartList.contains(dto)) {
 				cartList.add(dto);
 			}
-		});	
-		
+		});
+
 		cartList.forEach(l -> {
-			
+
 			l.setPrice(FormatPrice.getPrice(l.getProductDTO().getProd_price() * l.getQuantity()));
 		});
-		
+
 		CartTotalPriceDTO ctPrice = new CartTotalPriceDTO();
-		
+
 		ctPrice.setCartProducts(cartList);
-		
-		ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList)); 
-		
-		Integer total = cartList.stream().map(x -> x.getQuantity()).reduce((x,y) -> x+y).orElse(0);
-		
+
+		ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList));
+
+		Integer total = cartList.stream().map(x -> x.getQuantity()).reduce((x, y) -> x + y).orElse(0);
+
 		ctPrice.setTotal(total);
-		
-		if(CollectionUtils.isNotEmpty(cartList)) {
-			
-			ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList)); 
-		
+
+		if (CollectionUtils.isNotEmpty(cartList)) {
+
+			ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cartList));
+
 		} else {
-			
+
 			ctPrice.setTotalPrice(0.00);
 		}
-		
+
+		ctPrice.setUser(uDto);
 		return ctPrice;
 	}
-	
-	
-	
+
 }

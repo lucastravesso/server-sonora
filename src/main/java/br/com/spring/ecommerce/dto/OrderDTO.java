@@ -27,6 +27,8 @@ public class OrderDTO {
 	private PurchaseStatus status;
 	
 	private List<ProductsDTO> products;
+	
+	private UserDTO user;
 
 	private Cupon cupon;
 }

@@ -21,4 +21,5 @@ public class CuponDTO {
 	
 	private String c_final;
 	
+	private Integer c_quantity;
 }
