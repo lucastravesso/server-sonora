@@ -1,5 +1,6 @@
 package br.com.spring.ecommerce.service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,12 +19,15 @@ import org.springframework.stereotype.Service;
 
 import br.com.spring.ecommerce.dto.CartProductsDTO;
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
+import br.com.spring.ecommerce.dto.CuponDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
+import br.com.spring.ecommerce.model.Cupon;
 import br.com.spring.ecommerce.model.Order;
 import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
+import br.com.spring.ecommerce.repository.CuponRepository;
 import br.com.spring.ecommerce.repository.OrderRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
@@ -39,6 +43,9 @@ public class OrderService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private CuponRepository cuponRepository;
 
 	@Autowired
 	private AuthenticationService authService;
@@ -47,7 +54,7 @@ public class OrderService {
 	public ResponseEntity<?> createOrder() {
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		Order order = new Order();
-
+		
 		List<Products> prods = new ArrayList<>();
 
 		prods.addAll(user.getCart().getProduct());
@@ -56,11 +63,57 @@ public class OrderService {
 			order.setStatus(PurchaseStatus.PEDIDO_EFETUADO);
 			order.setProducts(prods);
 			order.setUser(user);
-
 			order.setOrderDate(new Date());
 
 			user.getCart().getProduct().clear();
+			
+			userRepository.save(user);
+			orderRepository.save(order);
 
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+	}
+	
+	@Transactional
+	public ResponseEntity<?> createOrderWith(CuponDTO cDto) {
+		User user = userRepository.findOneById(authService.getCurrent().getId());
+		Order order = new Order();
+		Cupon cupon = new Cupon();
+		
+		List<Products> prods = new ArrayList<>();
+
+		prods.addAll(user.getCart().getProduct());
+
+		if (CollectionUtils.isNotEmpty(prods)) {
+			order.setStatus(PurchaseStatus.PEDIDO_EFETUADO);
+			order.setProducts(prods);
+			order.setUser(user);
+			order.setOrderDate(new Date());
+
+			user.getCart().getProduct().clear();
+			
+			BeanUtils.copyProperties(cDto, cupon);
+
+			if(Objects.nonNull(cupon))
+			{
+				cupon.setC_quantity(cupon.getC_quantity() - 1);
+				try {
+					cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
+					cupon.setC_final(FormatDate.convertStringToDate(cDto.getC_final()));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				order.setCupon(cupon);
+				
+				cuponRepository.save(cupon);
+				userRepository.save(user);
+				orderRepository.save(order);
+
+				return ResponseEntity.ok().build();
+			}
+			
 			userRepository.save(user);
 			orderRepository.save(order);
 
@@ -130,6 +183,19 @@ public class OrderService {
 
 		Order order = orderRepository.findOneById(id);
 
+		if(Objects.nonNull(order.getCupon())) {
+			CuponDTO cDto = new CuponDTO();
+			UserDTO user = new UserDTO();
+			OrderDTO dto = new OrderDTO();
+			BeanUtils.copyProperties(order.getCupon(), cDto);
+			BeanUtils.copyProperties(order.getUser(), user);
+			BeanUtils.copyProperties(order, dto);
+			dto.setCupon(cDto);
+			dto.setUser(user);
+			dto.setOrderDate(FormatDate.convertDateToString(order.getOrderDate()));
+			return ResponseEntity.ok(dto);
+		}
+		
 		if (Objects.nonNull(order)) {
 			UserDTO user = new UserDTO();
 			OrderDTO dto = new OrderDTO();

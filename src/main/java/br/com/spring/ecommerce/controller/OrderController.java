@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
+import br.com.spring.ecommerce.dto.CuponDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.service.OrderService;
 
@@ -27,6 +28,12 @@ public class OrderController {
 	public ResponseEntity<?> createOrder()
 	{
 		return orderService.createOrder();
+	}
+	
+	@PostMapping(value = "/with")
+	public ResponseEntity<?> createOrderWithCupon(@RequestBody CuponDTO dto)
+	{
+		return orderService.createOrderWith(dto);
 	}
 	
 	@GetMapping(value = "/findAll")

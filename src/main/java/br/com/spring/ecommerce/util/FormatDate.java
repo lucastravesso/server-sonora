@@ -15,7 +15,7 @@ public class FormatDate {
 	
 	static public final Date convertStringToDate(String string) throws ParseException
 	{
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		Date date = formatter.parse(string);
 		return date;
 	}
