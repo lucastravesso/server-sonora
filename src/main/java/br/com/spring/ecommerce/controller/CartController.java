@@ -26,9 +26,24 @@ public class CartController {
 		return cartService.addProductToCart(id);
 	}
 	
+	@PostMapping("/add-cart/{prodId}/{qntd}")
+	public ResponseEntity<Products> addManyToCart(@PathVariable("prodId") Integer prodId, @PathVariable Integer qntd){
+		return cartService.addManyProductsToCart(prodId, qntd);
+	}
+	
+	@DeleteMapping("/remove-cart")
+	public ResponseEntity<Products> removeFromCart(){
+		return cartService.removeAllFromCart();
+	}
+	
 	@DeleteMapping("/remove-cart/{id}")
 	public ResponseEntity<Products> removeFromCart(@PathVariable("id") Integer id){
 		return cartService.removeFromCart(id);
+	}
+	
+	@DeleteMapping("/remove-all-cart/{prodId}")
+	public ResponseEntity<Products> removeManyFromCart(@PathVariable("prodId") Integer prodId){
+		return cartService.removeManyFromCart(prodId);
 	}
 	
 	@GetMapping("/get-product")

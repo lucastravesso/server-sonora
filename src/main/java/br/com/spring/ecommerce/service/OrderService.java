@@ -29,6 +29,7 @@ import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.CuponRepository;
 import br.com.spring.ecommerce.repository.OrderRepository;
+import br.com.spring.ecommerce.repository.ProductsRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
 import br.com.spring.ecommerce.util.FormatDate;
@@ -46,6 +47,9 @@ public class OrderService {
 	
 	@Autowired
 	private CuponRepository cuponRepository;
+	
+	@Autowired
+	private ProductsRepository prodRepository;
 
 	@Autowired
 	private AuthenticationService authService;
@@ -60,11 +64,17 @@ public class OrderService {
 		prods.addAll(user.getCart().getProduct());
 
 		if (CollectionUtils.isNotEmpty(prods)) {
+			
 			order.setStatus(PurchaseStatus.PEDIDO_EFETUADO);
 			order.setProducts(prods);
 			order.setUser(user);
 			order.setOrderDate(new Date());
 
+			prods.forEach(p -> {
+				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
+				prodRepository.save(p);
+			});
+			
 			user.getCart().getProduct().clear();
 			
 			userRepository.save(user);

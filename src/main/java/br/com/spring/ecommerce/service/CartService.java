@@ -53,6 +53,46 @@ public class CartService {
 		return ResponseEntity.notFound().build();
 	}
 	
+	public ResponseEntity<Products> addManyProductsToCart(Integer prodId, Integer qntd)
+	{
+		User user = userRepository.findOneById(authService.getCurrent().getId());
+
+		Optional<Products> product = productsRepository.findById(prodId);
+		
+		if(product.isPresent() && product.get().getProd_quantity() > 0 && qntd <= product.get().getProd_quantity())
+		{
+			for(int i =0; i< qntd; i++)
+			{
+				user.getCart().getProduct().add(product.get());
+				cartRepository.save(user.getCart());
+			}
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.notFound().build();
+	}
+	
+	public ResponseEntity<Products> removeAllFromCart()
+	{
+		User user = userRepository.findOneById(authService.getCurrent().getId());
+		user.getCart().getProduct().clear();
+		cartRepository.save(user.getCart());
+		return ResponseEntity.ok().build();
+	}
+	
+	public ResponseEntity<Products> removeManyFromCart(Integer prodId)
+	{
+		User user = userRepository.findOneById(authService.getCurrent().getId());
+		
+		List<Products> prodsToRemove = new ArrayList<>();
+		
+		prodsToRemove = user.getCart().getProduct().stream().filter(p -> p.getId().equals(prodId)).collect(Collectors.toList());
+		
+		user.getCart().getProduct().removeAll(prodsToRemove);
+		cartRepository.save(user.getCart());
+
+		return ResponseEntity.ok().build();
+	}
+	
 	public ResponseEntity<Products> removeFromCart(Integer id)
 	{
 		User user = userRepository.findOneById(authService.getCurrent().getId());
