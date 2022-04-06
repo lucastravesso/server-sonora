@@ -26,6 +26,7 @@ import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
 import br.com.spring.ecommerce.util.ChangeStatus;
 import br.com.spring.ecommerce.util.FormatDate;
+import br.com.spring.ecommerce.util.PurchaseStatus;
 
 @Service
 public class OrderCancelService {
@@ -67,6 +68,11 @@ public class OrderCancelService {
 	public ResponseEntity<?> changeStatus(Integer id, OrderCancelDTO dto)
 	{
 		Optional<OrderCancel> oChange = orderCancelRepository.findById(id);
+		
+		Optional<Order> order = orderRepository.findById(oChange.get().getOrder().getId());
+		
+		order.get().setStatus(PurchaseStatus.CANCELADO);
+		orderRepository.save(order.get());
 		
 		oChange.get().setStatus(dto.getStatus());
 		oChange.get().setChange_reply(dto.getChange_reply());
