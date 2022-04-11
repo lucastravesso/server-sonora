@@ -41,7 +41,7 @@ public class ProductsController {
 	{
 		return productsService.listAll(page);
 	}
-	
+		
 	@DeleteMapping(value = "/delete/{id}")
 	public ResponseEntity<?> deleteProduct(@PathVariable("id") Integer id) throws AccountNotFoundException
 	{
@@ -63,6 +63,11 @@ public class ProductsController {
 	@GetMapping(value = "/listall/{nome}")
 	public List<ProductsDTO> listAllByName(@PathVariable("nome") String nome){
 		return productsService.listAllByName(nome);
+	}
+	
+	@GetMapping(value = "/listtop")
+	public List<ProductsDTO> listAllByName(){
+		return productsService.listTopProducts();
 	}
 	
 	@GetMapping(value = "/listallcategory/{id}")

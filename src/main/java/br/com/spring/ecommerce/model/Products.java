@@ -45,5 +45,8 @@ public class Products {
 	@OneToOne(targetEntity = Category.class)
 	@JoinColumn(name = "id_categoria", foreignKey = @ForeignKey(name = "fk_categoria"))
 	private Category category;
+	
+	@Column(name = "prod_cliques")
+	private Integer prod_clicks;
 
 }

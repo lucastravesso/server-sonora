@@ -17,5 +17,7 @@ public interface ProductsRepository extends JpaRepository<Products, Integer>{
 	
 	List<Products> findAllByCategory_Id(Integer id);
 	
+	@Query(value = "SELECT * FROM produtos ORDER BY prod_cliques DESC LIMIT 5", nativeQuery = true)
+	List<Products> findTopProducts();
 	
 }

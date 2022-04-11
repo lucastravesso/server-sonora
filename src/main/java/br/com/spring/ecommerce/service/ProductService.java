@@ -43,6 +43,7 @@ public class ProductService {
 		Category category = mapper.map(dto.getCategoryDto(), Category.class);
 		
 		products.setCategory(category);
+		products.setProd_clicks(1);
 		
 		productsRepository.save(products);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -50,10 +51,19 @@ public class ProductService {
 	
 	public Page<Products> listAll(Pageable page)
 	{
-		
 		Page<Products> products = productsRepository.findAll(page);
-
 		return products;
+	}
+	
+	public List<ProductsDTO> listTopProducts(){
+		List<Products> products = productsRepository.findTopProducts();
+		
+		return products.stream().map(u ->{
+			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
+			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
+			dto.setCategoryDto(cDto);
+			return dto;
+		}).collect(Collectors.toList());
 	}
 	
 	public List<ProductsDTO> listAllByName(String nome){
@@ -86,7 +96,8 @@ public class ProductService {
 		
 		if(product.isPresent())
 		{
-			
+			product.get().setProd_clicks(product.get().getProd_clicks() + 1);
+			productsRepository.save(product.get());
 			BeanUtils.copyProperties(product.get(), pDto);
 			
 			if(Objects.nonNull(product.get().getCategory()))
