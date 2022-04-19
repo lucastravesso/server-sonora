@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.spring.ecommerce.dto.PasswordChangeDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.dto.UserWithoutAddressDTO;
 import br.com.spring.ecommerce.model.User;
@@ -65,6 +66,13 @@ public class UserController {
 	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,@RequestBody @Valid UserDTO dto) throws ParseException
 	{
 		return userService.updateUser(id, dto);
+	}
+	
+	@Transactional
+	@PutMapping(value ="/updatePass")
+	public ResponseEntity<?> updatePassword(@RequestBody @Valid PasswordChangeDTO dto)
+	{
+		return userService.updatePassword(dto);
 	}
 	
 }

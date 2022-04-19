@@ -20,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.spring.ecommerce.dto.AddressDTO;
+import br.com.spring.ecommerce.dto.PasswordChangeDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.dto.UserWithoutAddressDTO;
 import br.com.spring.ecommerce.model.Address;
@@ -47,6 +48,9 @@ public class UserService {
 	
 	@Autowired
 	private AuthenticationService authService;
+	
+	@Autowired
+	private EncoderService eService;
 		
 	private Mapper mapper = new DozerBeanMapper();
 	
@@ -78,7 +82,7 @@ public class UserService {
 		User user = mapper.map(dto, User.class);
 		Cart cart = new Cart();
 
-		user.setPassword(new BCryptPasswordEncoder().encode(dto.getPassword()).toString());
+		user.setPassword(eService.encoder(dto.getPassword()).toString());
 		
 		List<Profile> profile = profileRepository.findAll();
 		Set<Profile> role = profile.stream().filter(p -> p.getName().equals("ROLE_COMPRADOR")).collect(Collectors.toSet());
@@ -146,6 +150,25 @@ public class UserService {
 		userRepository.findById(Id).orElseThrow(() -> new AccountNotFoundException());
 		userRepository.deleteById(Id);
 		return ResponseEntity.ok().build();
+
+	}
+	
+	public ResponseEntity<?> updatePassword(PasswordChangeDTO dto){
+		Optional<User> user = userRepository.findById(authService.getCurrent().getId());
+			
+		if (user.isPresent()) {
+
+			if(eService.verifyPassword(dto.getOldPass(), user.get().getPassword())) {
+				
+				user.get().setPassword(eService.encoder(dto.getPassword()));
+				userRepository.save(user.get());
+				return ResponseEntity.status(HttpStatus.OK).build();
+				
+			}else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+			}
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
 	}
 	

@@ -36,4 +36,5 @@ public class ProductsDTO {
 	@NotNull
 	private CategoryDTO categoryDto;
 
+	private Integer prod_active;
 }

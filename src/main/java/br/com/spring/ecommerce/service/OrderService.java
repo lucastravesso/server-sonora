@@ -72,6 +72,9 @@ public class OrderService {
 
 			prods.forEach(p -> {
 				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
+				if(p.getProd_quantity() == 0) {
+					p.setProd_active(0);
+				}
 				prodRepository.save(p);
 			});
 			
@@ -100,6 +103,14 @@ public class OrderService {
 			order.setProducts(prods);
 			order.setUser(user);
 			order.setOrderDate(new Date());
+			
+			prods.forEach(p -> {
+				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
+				if(p.getProd_quantity() == 0) {
+					p.setProd_active(0);
+				}
+				prodRepository.save(p);
+			});
 
 			user.getCart().getProduct().clear();
 			

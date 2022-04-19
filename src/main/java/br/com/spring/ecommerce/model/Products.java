@@ -48,5 +48,8 @@ public class Products {
 	
 	@Column(name = "prod_cliques")
 	private Integer prod_clicks;
+	
+	@Column(name = "prod_ativo")
+	private Integer prod_active;
 
 }

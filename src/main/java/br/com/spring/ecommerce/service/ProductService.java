@@ -45,6 +45,12 @@ public class ProductService {
 		products.setCategory(category);
 		products.setProd_clicks(1);
 		
+		if(dto.getProd_quantity() > 0) {
+			products.setProd_active(1);
+		}else {
+			products.setProd_active(0);
+		}
+		
 		productsRepository.save(products);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -130,6 +136,11 @@ public class ProductService {
 		if(product.isPresent())
 		{
 			BeanUtils.copyProperties(dto, product.get(), "categoryDto");
+			if(dto.getProd_quantity() > 0) {
+				product.get().setProd_active(1);
+			}else {
+				product.get().setProd_active(0);
+			}
 			
 			if(Objects.nonNull(dto.getCategoryDto()))
 			{	

@@ -66,6 +66,11 @@ public class ProductChangeService {
 		
 		productChangeReposioty.save(pChange.get());
 		
+		if(pChange.get().getStatus().equals(ChangeStatus.TROCA_APROVADA)) {
+			pChange.get().getProduct().setProd_quantity(pChange.get().getProduct().getProd_quantity() + 1);
+			productsRepository.save(pChange.get().getProduct());
+		}
+		
 		return ResponseEntity.ok().build();
 	}
 	
