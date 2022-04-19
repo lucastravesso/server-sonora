@@ -38,8 +38,8 @@ public class Card {
 	@Column(name = "c_numero")
 	private String card_number;
 	
-	@Column(name = "c_validade")
-	private String card_valid;
+	@Column(name = "c_codigo")
+	private String card_security;
 	
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))

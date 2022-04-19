@@ -26,7 +26,7 @@ public class CardDTO {
 	private String card_number;
 	
 	@NotNull
-	private String card_valid;
+	private String card_security;
 	
 	private User user;
 }

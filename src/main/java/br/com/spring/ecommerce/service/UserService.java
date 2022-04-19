@@ -128,6 +128,7 @@ public class UserService {
 			if(Objects.nonNull(u)) {
 				
 				BeanUtils.copyProperties(u, dto, "password");
+				dto.setBorn(FormatDate.convertDateToString(u.getBorn()));
 			}
 			
 			if(Objects.nonNull(u.getAddress())) {
