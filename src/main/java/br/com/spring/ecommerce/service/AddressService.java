@@ -2,6 +2,8 @@ package br.com.spring.ecommerce.service;
 
 import java.util.Optional;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +42,13 @@ public class AddressService {
 		
 	}
 	
+	public ResponseEntity<?> deleteAddress(Integer Id) throws AccountNotFoundException
+	{
+		addressRepository.findById(Id).orElseThrow(() -> new AccountNotFoundException());
+		addressRepository.deleteById(Id);
+		return ResponseEntity.ok().build();
+
+	}
 	
 	
 }
