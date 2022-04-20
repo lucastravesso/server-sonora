@@ -31,12 +31,6 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping(value = "/register")
-	public ResponseEntity<User> insertUser(@RequestBody @Valid UserDTO dto)
-	{
-		return userService.insertUser(dto);
-	}
-	
 	@PostMapping(value = "/registerNoAddress")
 	public ResponseEntity<User> insertUser(@RequestBody @Valid UserWithoutAddressDTO dto)
 	{

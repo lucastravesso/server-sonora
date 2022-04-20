@@ -15,6 +15,8 @@ public class AddressDTO {
 
 	private Integer id;
 	
+	private boolean principal;
+	
 	@NotNull
 	private String country;
 	
@@ -34,5 +36,7 @@ public class AddressDTO {
 	private String number;
 	
 	private String complement;
+	
+	private UserDTO userDto;
 	
 }

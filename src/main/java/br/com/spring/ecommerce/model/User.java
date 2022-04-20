@@ -33,45 +33,41 @@ import lombok.NoArgsConstructor;
 @Entity
 @DynamicUpdate
 @Table(name = "usuarios")
-public class User implements UserDetails{
+public class User implements UserDetails {
 
 	private static final long serialVersionUID = -4523629298819464374L;
-	
-	@Id 
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_usuario")
 	private Integer id;
-	
+
 	@Column(name = "primeiro_nome")
 	private String firstName;
-	
+
 	@Column(name = "ultimo_nome")
 	private String lastName;
-	
+
 	@Column(name = "usu_cpf")
 	private String cpf;
-	
+
 	@Column(name = "usu_rg")
 	private String rg;
-	
+
 	@Column(name = "usu_telefone")
 	private String phone;
-	
+
 	@Column(name = "usu_dt_nasc")
 	private Date born;
-	
+
 	@Column(name = "usu_dt_registro")
 	private Date register;
-	
+
 	@Column(name = "usu_email")
 	protected String email;
-	
+
 	@Column(name = "usu_senha")
 	protected String password;
-	
-	@OneToOne(targetEntity = Address.class, cascade = CascadeType.REMOVE, optional = true)
-	@JoinColumn(name = "id_endereco", foreignKey = @ForeignKey(name = "fk_endereco"))
-	private Address address;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Profile> profiles = new HashSet<>();
@@ -79,7 +75,7 @@ public class User implements UserDetails{
 	@OneToOne(targetEntity = Cart.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_carrinho", foreignKey = @ForeignKey(name = "fk_carrinho"))
 	private Cart cart;
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
@@ -121,7 +117,7 @@ public class User implements UserDetails{
 		// TODO Auto-generated method stub
 		return true;
 	}
-	
+
 	public UsernamePasswordAuthenticationToken converter() {
 		return new UsernamePasswordAuthenticationToken(email, password);
 	}

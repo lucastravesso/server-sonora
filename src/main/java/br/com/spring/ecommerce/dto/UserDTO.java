@@ -1,6 +1,7 @@
 package br.com.spring.ecommerce.dto;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import br.com.spring.ecommerce.model.Profile;
@@ -35,7 +36,7 @@ public class UserDTO {
 	
 	private String password;
 	
-	private AddressDTO addressDto;
+	private List<AddressDTO> addressDto;
 		
 	private Set<Profile> profile;
 }
