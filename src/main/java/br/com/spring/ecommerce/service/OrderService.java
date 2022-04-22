@@ -23,10 +23,12 @@ import br.com.spring.ecommerce.dto.CuponDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
+import br.com.spring.ecommerce.model.Address;
 import br.com.spring.ecommerce.model.Cupon;
 import br.com.spring.ecommerce.model.Order;
 import br.com.spring.ecommerce.model.Products;
 import br.com.spring.ecommerce.model.User;
+import br.com.spring.ecommerce.repository.AddressRepository;
 import br.com.spring.ecommerce.repository.CuponRepository;
 import br.com.spring.ecommerce.repository.OrderRepository;
 import br.com.spring.ecommerce.repository.ProductsRepository;
@@ -46,6 +48,9 @@ public class OrderService {
 	private UserRepository userRepository;
 	
 	@Autowired
+	private AddressRepository addressRepository;
+	
+	@Autowired
 	private CuponRepository cuponRepository;
 	
 	@Autowired
@@ -55,9 +60,10 @@ public class OrderService {
 	private AuthenticationService authService;
 
 	@Transactional
-	public ResponseEntity<?> createOrder() {
+	public ResponseEntity<?> createOrder(Integer id) {
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		Order order = new Order();
+		Optional<Address> address = addressRepository.findById(id);
 		
 		List<Products> prods = new ArrayList<>();
 
@@ -69,6 +75,7 @@ public class OrderService {
 			order.setProducts(prods);
 			order.setUser(user);
 			order.setOrderDate(new Date());
+			order.setAddress(address.get());
 
 			prods.forEach(p -> {
 				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
@@ -89,10 +96,11 @@ public class OrderService {
 	}
 	
 	@Transactional
-	public ResponseEntity<?> createOrderWith(CuponDTO cDto) {
+	public ResponseEntity<?> createOrderWith(CuponDTO cDto, Integer id) {
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		Order order = new Order();
 		Cupon cupon = new Cupon();
+		Optional<Address> address = addressRepository.findById(id);
 		
 		List<Products> prods = new ArrayList<>();
 
@@ -103,6 +111,7 @@ public class OrderService {
 			order.setProducts(prods);
 			order.setUser(user);
 			order.setOrderDate(new Date());
+			order.setAddress(address.get());
 			
 			prods.forEach(p -> {
 				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
@@ -171,6 +180,7 @@ public class OrderService {
 		}).collect(Collectors.toList());
 
 	}
+
 
 	public ResponseEntity<?> changeStatus(Integer id, OrderDTO dto) {
 		Optional<Order> order = orderRepository.findById(id);

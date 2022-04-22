@@ -24,16 +24,16 @@ public class OrderController {
 	@Autowired
 	private OrderService orderService;
 	
-	@PostMapping
-	public ResponseEntity<?> createOrder()
+	@PostMapping(value = "/{id}")
+	public ResponseEntity<?> createOrder(@PathVariable Integer id)
 	{
-		return orderService.createOrder();
+		return orderService.createOrder(id);
 	}
 	
-	@PostMapping(value = "/with")
-	public ResponseEntity<?> createOrderWithCupon(@RequestBody CuponDTO dto)
+	@PostMapping(value = "/with/{id}")
+	public ResponseEntity<?> createOrderWithCupon(@RequestBody CuponDTO dto, @PathVariable Integer id)
 	{
-		return orderService.createOrderWith(dto);
+		return orderService.createOrderWith(dto, id);
 	}
 	
 	@GetMapping(value = "/findAll")

@@ -59,4 +59,8 @@ public class Order {
 	@JoinColumn(name = "id_cupon", foreignKey = @ForeignKey(name = "fk_cupon"))
 	private Cupon cupon;
 	
+	@OneToOne(targetEntity = Address.class)
+	@JoinColumn(name= "id_endereco", foreignKey = @ForeignKey(name = "fk_order_endereco"))
+	private Address address;
+	
 }

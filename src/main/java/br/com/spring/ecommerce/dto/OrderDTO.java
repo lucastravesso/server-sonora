@@ -2,7 +2,6 @@ package br.com.spring.ecommerce.dto;
 
 import java.util.List;
 
-
 import br.com.spring.ecommerce.util.PurchaseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +26,7 @@ public class OrderDTO {
 	private UserDTO user;
 
 	private CuponDTO cupon;
+	
+	private AddressDTO addressDto;
+
 }
