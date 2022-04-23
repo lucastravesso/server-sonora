@@ -37,4 +37,6 @@ public class ProductsDTO {
 	private CategoryDTO categoryDto;
 
 	private Integer prod_active;
+	
+	private String prod_act_reason;
 }

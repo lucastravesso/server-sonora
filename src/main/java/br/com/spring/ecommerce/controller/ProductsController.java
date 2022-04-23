@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.spring.ecommerce.dto.ProductsDTO;
@@ -52,6 +53,12 @@ public class ProductsController {
 	public ResponseEntity<?> updateProduct(@PathVariable("id") Integer id, @RequestBody @Valid ProductsDTO dto)
 	{
 		return productsService.updateProduct(id, dto);
+	}
+	
+	@PutMapping(value = "/update-act/{id}")
+	public ResponseEntity<?> updateActive(@PathVariable("id") Integer id, @RequestParam(name="motivo") String motivo)
+	{
+		return productsService.activateProduct(id, motivo);
 	}
 	
 	@GetMapping(value ="/list/{id}")

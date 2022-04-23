@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.spring.ecommerce.dto.AddressDTO;
 import br.com.spring.ecommerce.dto.CartProductsDTO;
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.CuponDTO;
@@ -81,6 +82,7 @@ public class OrderService {
 				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
 				if(p.getProd_quantity() == 0) {
 					p.setProd_active(0);
+					p.setProd_act_reason("FORA DE MERCADO");
 				}
 				prodRepository.save(p);
 			});
@@ -117,6 +119,7 @@ public class OrderService {
 				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
 				if(p.getProd_quantity() == 0) {
 					p.setProd_active(0);
+					p.setProd_act_reason("FORA DE MERCADO");
 				}
 				prodRepository.save(p);
 			});
@@ -216,12 +219,15 @@ public class OrderService {
 
 		if(Objects.nonNull(order.getCupon())) {
 			CuponDTO cDto = new CuponDTO();
+			AddressDTO aDto = new AddressDTO();
 			UserDTO user = new UserDTO();
 			OrderDTO dto = new OrderDTO();
+			BeanUtils.copyProperties(order.getAddress(), aDto);
 			BeanUtils.copyProperties(order.getCupon(), cDto);
 			BeanUtils.copyProperties(order.getUser(), user);
 			BeanUtils.copyProperties(order, dto);
 			dto.setCupon(cDto);
+			dto.setAddressDto(aDto);
 			dto.setUser(user);
 			dto.setOrderDate(FormatDate.convertDateToString(order.getOrderDate()));
 			return ResponseEntity.ok(dto);
@@ -229,10 +235,13 @@ public class OrderService {
 		
 		if (Objects.nonNull(order)) {
 			UserDTO user = new UserDTO();
+			AddressDTO aDto = new AddressDTO();
 			OrderDTO dto = new OrderDTO();
 			BeanUtils.copyProperties(order.getUser(), user);
+			BeanUtils.copyProperties(order.getAddress(), aDto);
 			BeanUtils.copyProperties(order, dto);
 			dto.setUser(user);
+			dto.setAddressDto(aDto);
 			dto.setOrderDate(FormatDate.convertDateToString(order.getOrderDate()));
 			return ResponseEntity.ok(dto);
 		}

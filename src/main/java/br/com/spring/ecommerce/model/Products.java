@@ -51,5 +51,9 @@ public class Products {
 	
 	@Column(name = "prod_ativo")
 	private Integer prod_active;
+	
+	@Column(name = "prod_act_rasao")
+	private String prod_act_reason;
+
 
 }

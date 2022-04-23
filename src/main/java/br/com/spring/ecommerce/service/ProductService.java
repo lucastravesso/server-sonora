@@ -28,134 +28,145 @@ import br.com.spring.ecommerce.repository.ProductsRepository;
 @Service
 public class ProductService {
 
-	
 	@Autowired
 	private ProductsRepository productsRepository;
-	
+
 	@Autowired
 	private CategoryRepository categoryRepository;
-	
+
 	private Mapper mapper = new DozerBeanMapper();
-	
-	public ResponseEntity<Products> insertProduct(ProductsDTO dto)
-	{
+
+	public ResponseEntity<Products> insertProduct(ProductsDTO dto) {
 		Products products = mapper.map(dto, Products.class);
 		Category category = mapper.map(dto.getCategoryDto(), Category.class);
-		
+
 		products.setCategory(category);
 		products.setProd_clicks(1);
-		
-		if(dto.getProd_quantity() > 0) {
+
+		if (dto.getProd_quantity() > 0) {
 			products.setProd_active(1);
-		}else {
+		} else {
 			products.setProd_active(0);
 		}
-		
+
 		productsRepository.save(products);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
-	
-	public Page<Products> listAll(Pageable page)
-	{
+
+	public Page<Products> listAll(Pageable page) {
 		Page<Products> products = productsRepository.findAll(page);
 		return products;
 	}
-	
-	public List<ProductsDTO> listTopProducts(){
+
+	public List<ProductsDTO> listTopProducts() {
 		List<Products> products = productsRepository.findTopProducts();
-		
-		return products.stream().map(u ->{
+
+		return products.stream().map(u -> {
 			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
 			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
 			dto.setCategoryDto(cDto);
 			return dto;
 		}).collect(Collectors.toList());
 	}
-	
-	public List<ProductsDTO> listAllByName(String nome){
+
+	public List<ProductsDTO> listAllByName(String nome) {
 		List<Products> products = productsRepository.findByName(nome);
-		
-		return products.stream().map(u ->{
+
+		return products.stream().map(u -> {
 			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
 			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
 			dto.setCategoryDto(cDto);
 			return dto;
 		}).collect(Collectors.toList());
 	}
-	
-	public List<ProductsDTO> listAllByCategory(Integer id){
+
+	public List<ProductsDTO> listAllByCategory(Integer id) {
 		List<Products> products = productsRepository.findAllByCategory_Id(id);
-		
-		return products.stream().map(u ->{
+
+		return products.stream().map(u -> {
 			ProductsDTO dto = mapper.map(u, ProductsDTO.class);
 			CategoryDTO cDto = mapper.map(u.getCategory(), CategoryDTO.class);
 			dto.setCategoryDto(cDto);
 			return dto;
 		}).collect(Collectors.toList());
 	}
-	
-	public ResponseEntity<ProductsDTO> listById(Integer id) 
-	{
+
+	public ResponseEntity<ProductsDTO> listById(Integer id) {
 		Optional<Products> product = productsRepository.findById(id);
 		CategoryDTO cDto = new CategoryDTO();
 		ProductsDTO pDto = new ProductsDTO();
-		
-		if(product.isPresent())
-		{
+
+		if (product.isPresent()) {
 			product.get().setProd_clicks(product.get().getProd_clicks() + 1);
 			productsRepository.save(product.get());
 			BeanUtils.copyProperties(product.get(), pDto);
-			
-			if(Objects.nonNull(product.get().getCategory()))
-			{
-				
+
+			if (Objects.nonNull(product.get().getCategory())) {
+
 				BeanUtils.copyProperties(product.get().getCategory(), cDto);
 				pDto.setCategoryDto(cDto);
-				
+
 				return ResponseEntity.ok(pDto);
 			}
 		}
 		return ResponseEntity.notFound().build();
 	}
-	
 
-	public ResponseEntity<?> deleteProduct(Integer Id) throws AccountNotFoundException
-	{
+	public ResponseEntity<?> deleteProduct(Integer Id) throws AccountNotFoundException {
 		productsRepository.findById(Id).orElseThrow(() -> new AccountNotFoundException());
 		productsRepository.deleteById(Id);
 		return ResponseEntity.ok().build();
 
 	}
-	
+
 	@Transactional
-	public ResponseEntity<?> updateProduct(Integer id, ProductsDTO dto)
-	{
-		
+	public ResponseEntity<?> activateProduct(Integer id, String motivo) {
 		Optional<Products> product = productsRepository.findById(id);
-		
-		if(product.isPresent())
-		{
-			BeanUtils.copyProperties(dto, product.get(), "categoryDto");
-			if(dto.getProd_quantity() > 0) {
+
+		if (product.isPresent()) {
+			if (product.get().getProd_active().equals(0)) {
 				product.get().setProd_active(1);
-			}else {
+				product.get().setProd_act_reason(motivo);
+			} else {
 				product.get().setProd_active(0);
+				product.get().setProd_act_reason(motivo);
 			}
-			
-			if(Objects.nonNull(dto.getCategoryDto()))
-			{	
+			productsRepository.save(product.get());
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+
+	}
+
+	@Transactional
+	public ResponseEntity<?> updateProduct(Integer id, ProductsDTO dto) {
+
+		Optional<Products> product = productsRepository.findById(id);
+
+		if (product.isPresent()) {
+			BeanUtils.copyProperties(dto, product.get(), "categoryDto");
+			if (dto.getProd_quantity() > 0) {
+				product.get().setProd_active(1);
+				product.get().setProd_act_reason("DISPONIVEL");
+			} else {
+				product.get().setProd_active(0);
+				
+			}
+
+			if (Objects.nonNull(dto.getCategoryDto())) {
 				Category category = categoryRepository.findOneById(dto.getCategoryDto().getId());
-				
+
 				product.get().setCategory(category);
-				
+
 				productsRepository.save(product.get());
-				
+
 				return ResponseEntity.ok().build();
 			}
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.notFound().build();
-		
+
 	}
-	
+
 }
