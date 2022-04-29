@@ -57,7 +57,7 @@ public class CuponService {
 	}
 	
 	public List<CuponDTO> listAll(){
-		List<Cupon> cupons = cuponRepository.findAll();
+		List<Cupon> cupons = cuponRepository.findByTypePromo();
 		
 		return cupons.stream().map(c ->{
 			
@@ -71,6 +71,23 @@ public class CuponService {
 			return dto;
 		}).collect(Collectors.toList());
 	}
+	
+	public List<CuponDTO> listAllChange(){
+		List<Cupon> cupons = cuponRepository.findByTypeChange();
+		
+		return cupons.stream().map(c ->{
+			
+			CuponDTO dto = new CuponDTO();
+			
+			BeanUtils.copyProperties(c, dto);
+			
+			dto.setC_register(FormatDate.convertDateToString(c.getC_register()));
+			dto.setC_final(FormatDate.convertDateToString(c.getC_final()));
+
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
 	
 	public CuponDTO listOne(Integer id)
 	{
