@@ -216,7 +216,7 @@ public class OrderService {
 						userRepository.save(user);
 						orderRepository.save(order);
 
-						return ResponseEntity.ok().build();
+						return ResponseEntity.ok(cuponGenerated.getC_name());
 
 					}
 				}
