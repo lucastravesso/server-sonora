@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -47,13 +48,13 @@ public class OrderService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AddressRepository addressRepository;
-	
+
 	@Autowired
 	private CuponRepository cuponRepository;
-	
+
 	@Autowired
 	private ProductsRepository prodRepository;
 
@@ -65,13 +66,13 @@ public class OrderService {
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		Order order = new Order();
 		Optional<Address> address = addressRepository.findById(id);
-		
+
 		List<Products> prods = new ArrayList<>();
 
 		prods.addAll(user.getCart().getProduct());
 
 		if (CollectionUtils.isNotEmpty(prods)) {
-			
+
 			order.setStatus(PurchaseStatus.PEDIDO_EFETUADO);
 			order.setProducts(prods);
 			order.setUser(user);
@@ -80,15 +81,15 @@ public class OrderService {
 
 			prods.forEach(p -> {
 				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
-				if(p.getProd_quantity() == 0) {
+				if (p.getProd_quantity() == 0) {
 					p.setProd_active(0);
 					p.setProd_act_reason("FORA DE MERCADO");
 				}
 				prodRepository.save(p);
 			});
-			
+
 			user.getCart().getProduct().clear();
-			
+
 			userRepository.save(user);
 			orderRepository.save(order);
 
@@ -96,17 +97,24 @@ public class OrderService {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
-	
+
 	@Transactional
 	public ResponseEntity<?> createOrderWith(CuponDTO cDto, Integer id) {
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		Order order = new Order();
 		Cupon cupon = new Cupon();
 		Optional<Address> address = addressRepository.findById(id);
-		
+
 		List<Products> prods = new ArrayList<>();
+		List<ProductsDTO> prodsDTO = new ArrayList<>();
 
 		prods.addAll(user.getCart().getProduct());
+
+		prods.forEach(pr -> {
+			ProductsDTO dto = new ProductsDTO();
+			BeanUtils.copyProperties(pr, dto);
+			prodsDTO.add(dto);
+		});
 
 		if (CollectionUtils.isNotEmpty(prods)) {
 			order.setStatus(PurchaseStatus.PEDIDO_EFETUADO);
@@ -114,39 +122,108 @@ public class OrderService {
 			order.setUser(user);
 			order.setOrderDate(new Date());
 			order.setAddress(address.get());
-			
+
 			prods.forEach(p -> {
 				p.setProd_quantity(p.getProd_quantity() - (Integer) 1);
-				if(p.getProd_quantity() == 0) {
+				if (p.getProd_quantity() == 0) {
 					p.setProd_active(0);
 					p.setProd_act_reason("FORA DE MERCADO");
 				}
 				prodRepository.save(p);
 			});
 
-			user.getCart().getProduct().clear();
-			
 			BeanUtils.copyProperties(cDto, cupon);
 
-			if(Objects.nonNull(cupon))
-			{
-				cupon.setC_quantity(cupon.getC_quantity() - 1);
-				try {
-					cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
-					cupon.setC_final(FormatDate.convertStringToDate(cDto.getC_final()));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
-				
-				order.setCupon(cupon);
-				
-				cuponRepository.save(cupon);
-				userRepository.save(user);
-				orderRepository.save(order);
+			if (Objects.nonNull(cupon)) {
 
-				return ResponseEntity.ok().build();
+				if (cupon.getC_type() == 0) {
+
+					cupon.setC_quantity(cupon.getC_quantity() - 1);
+					try {
+						cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
+						cupon.setC_final(FormatDate.convertStringToDate(cDto.getC_final()));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+
+					order.setCupon(cupon);
+
+					user.getCart().getProduct().clear();
+
+					cuponRepository.save(cupon);
+					userRepository.save(user);
+					orderRepository.save(order);
+
+					return ResponseEntity.ok().build();
+
+				} else if (cupon.getC_type() == 1) {
+
+					List<CartProductsDTO> cpDto = new ArrayList<>();
+
+					prodsDTO.forEach(p -> {
+
+						List<ProductsDTO> qntd = new ArrayList<>();
+						CartProductsDTO dto = new CartProductsDTO();
+						qntd = prodsDTO.stream().filter(c -> c.getId().equals(p.getId())).collect(Collectors.toList());
+						dto.setQuantity(qntd.size());
+						dto.setProductDTO(p);
+
+						if (!cpDto.contains(dto)) {
+							cpDto.add(dto);
+						}
+					});
+					
+					cpDto.forEach(l -> {
+
+						l.setPrice(FormatPrice.getPrice(l.getProductDTO().getProd_price() * l.getQuantity()));
+					});
+
+					CartTotalPriceDTO ctPrice = new CartTotalPriceDTO();
+
+					ctPrice.setCartProducts(cpDto);
+
+					ctPrice.setTotalPrice(FormatPrice.getTotalPrice(cpDto));
+
+					if (ctPrice.getTotalPrice() < cupon.getC_percentage()) {
+
+						cupon.setC_quantity(cupon.getC_quantity() - 1);
+
+						try {
+							cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
+							cupon.setC_final(FormatDate.convertStringToDate(cDto.getC_final()));
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+
+						Random rand = new Random();
+						Integer nome = rand.nextInt(999999);
+
+						Cupon cuponGenerated = new Cupon();
+						cuponGenerated.setC_name(nome.toString());
+						cuponGenerated.setC_register(new Date());
+						cuponGenerated.setC_final(new Date());
+						Double val = cupon.getC_percentage().doubleValue() - ctPrice.getTotalPrice();
+						cuponGenerated.setC_percentage(val.intValue());
+						cuponGenerated.setC_quantity(1);
+						cuponGenerated.setC_type(1);
+						cuponRepository.save(cuponGenerated);
+
+						user.getCart().getProduct().clear();
+
+						order.setCupon(cupon);
+
+						cuponRepository.save(cupon);
+						userRepository.save(user);
+						orderRepository.save(order);
+
+						return ResponseEntity.ok().build();
+
+					}
+				}
 			}
-			
+
+			user.getCart().getProduct().clear();
+
 			userRepository.save(user);
 			orderRepository.save(order);
 
@@ -184,7 +261,6 @@ public class OrderService {
 
 	}
 
-
 	public ResponseEntity<?> changeStatus(Integer id, OrderDTO dto) {
 		Optional<Order> order = orderRepository.findById(id);
 
@@ -217,7 +293,7 @@ public class OrderService {
 
 		Order order = orderRepository.findOneById(id);
 
-		if(Objects.nonNull(order.getCupon())) {
+		if (Objects.nonNull(order.getCupon())) {
 			CuponDTO cDto = new CuponDTO();
 			AddressDTO aDto = new AddressDTO();
 			UserDTO user = new UserDTO();
@@ -232,7 +308,7 @@ public class OrderService {
 			dto.setOrderDate(FormatDate.convertDateToString(order.getOrderDate()));
 			return ResponseEntity.ok(dto);
 		}
-		
+
 		if (Objects.nonNull(order)) {
 			UserDTO user = new UserDTO();
 			AddressDTO aDto = new AddressDTO();

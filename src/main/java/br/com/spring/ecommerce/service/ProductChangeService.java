@@ -69,7 +69,7 @@ public class ProductChangeService {
 		if (pChange.get().getStatus().equals(ChangeStatus.TROCA_APROVADA)) {
 
 			Random rand = new Random();
-			Integer nome = rand.nextInt(9999);
+			Integer nome = rand.nextInt(999999);
 			pChange.get().getProduct().setProd_quantity(pChange.get().getProduct().getProd_quantity() + 1);
 			productsRepository.save(pChange.get().getProduct());
 			Cupon cupon = new Cupon();

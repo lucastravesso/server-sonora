@@ -46,7 +46,7 @@ public class CuponService {
 		
 		if(cupon.isPresent())
 		{
-			BeanUtils.copyProperties(dto, cupon.get(), "id");
+			BeanUtils.copyProperties(dto, cupon.get(), "id", "c_type");
 			cupon.get().setC_register(FormatDate.convertStringToDate(dto.getC_register()));
 			cupon.get().setC_final(FormatDate.convertStringToDate(dto.getC_final()));
 		}else {
