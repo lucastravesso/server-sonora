@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 
 import br.com.spring.ecommerce.dto.CuponDTO;
 import br.com.spring.ecommerce.model.Cupon;
+import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.CuponRepository;
+import br.com.spring.ecommerce.repository.UserRepository;
+import br.com.spring.ecommerce.security.AuthenticationService;
 import br.com.spring.ecommerce.util.FormatDate;
 
 @Service
@@ -24,6 +27,12 @@ public class CuponService {
 
 	@Autowired
 	private CuponRepository cuponRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private AuthenticationService authService;
 	
 	public ResponseEntity<Cupon> insertCupon(CuponDTO dto) throws ParseException
 	{
@@ -71,6 +80,26 @@ public class CuponService {
 			return dto;
 		}).collect(Collectors.toList());
 	}
+	
+	public List<CuponDTO> listAlByUserl(){
+
+		Optional<User> user = userRepository.findById(authService.getCurrent().getId());
+		
+		List<Cupon> cupons = cuponRepository.findByUser(user.get());
+		
+		return cupons.stream().map(c ->{
+			
+			CuponDTO dto = new CuponDTO();
+			
+			BeanUtils.copyProperties(c, dto);
+			
+			dto.setC_register(FormatDate.convertDateToString(c.getC_register()));
+			dto.setC_final(FormatDate.convertDateToString(c.getC_final()));
+
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
 	
 	public List<CuponDTO> listAllChange(){
 		List<Cupon> cupons = cuponRepository.findByTypeChange();

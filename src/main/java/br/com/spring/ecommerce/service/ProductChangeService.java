@@ -62,12 +62,15 @@ public class ProductChangeService {
 
 	@Transactional
 	public ResponseEntity<?> changeStatus(Integer id, ProductChangeDTO dto) {
+		
 		Optional<ProductChange> pChange = productChangeReposioty.findById(id);
 
 		pChange.get().setStatus(dto.getStatus());
 
-		if (pChange.get().getStatus().equals(ChangeStatus.TROCA_APROVADA)) {
-
+		if (pChange.get().getStatus().equals(ChangeStatus.PRODUTO_RETORNADO)) {
+			
+			Optional<User> user = userRepository.findById(authService.getCurrent().getId());
+			
 			Random rand = new Random();
 			Integer nome = rand.nextInt(999999);
 			pChange.get().getProduct().setProd_quantity(pChange.get().getProduct().getProd_quantity() + 1);
@@ -80,6 +83,7 @@ public class ProductChangeService {
 			cupon.setC_percentage(val);
 			cupon.setC_quantity(1);
 			cupon.setC_type(1);
+			cupon.setUser(user.get());
 			cuponRepository.save(cupon);
 
 			pChange.get().setChange_reply(dto.getChange_reply() + " - " + nome);

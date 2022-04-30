@@ -187,6 +187,7 @@ public class OrderService {
 					if (ctPrice.getTotalPrice() < cupon.getC_percentage()) {
 
 						cupon.setC_quantity(cupon.getC_quantity() - 1);
+						cupon.setUser(user);
 
 						try {
 							cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
@@ -206,6 +207,7 @@ public class OrderService {
 						cuponGenerated.setC_percentage(val.intValue());
 						cuponGenerated.setC_quantity(1);
 						cuponGenerated.setC_type(1);
+						cuponGenerated.setUser(user);
 						cuponRepository.save(cuponGenerated);
 
 						user.getCart().getProduct().clear();
@@ -221,9 +223,21 @@ public class OrderService {
 					}
 				}
 			}
+			
+			cupon.setC_quantity(cupon.getC_quantity() - 1);
+			cupon.setUser(user);
+
+			try {
+				cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
+				cupon.setC_final(FormatDate.convertStringToDate(cDto.getC_final()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 
 			user.getCart().getProduct().clear();
+			order.setCupon(cupon);
 
+			cuponRepository.save(cupon);
 			userRepository.save(user);
 			orderRepository.save(order);
 
