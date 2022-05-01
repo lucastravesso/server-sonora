@@ -38,10 +38,11 @@ public class CuponService {
 	{
 		Cupon cupon = new Cupon();
 		
-		BeanUtils.copyProperties(dto, cupon);
+		BeanUtils.copyProperties(dto, cupon, "user");
 		
 		cupon.setC_register(FormatDate.convertStringToDate(dto.getC_register()));
 		cupon.setC_final(FormatDate.convertStringToDate(dto.getC_final()));
+		cupon.setC_type(0);
 		
 		cuponRepository.save(cupon);
 	
