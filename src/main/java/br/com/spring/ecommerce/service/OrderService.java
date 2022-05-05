@@ -22,6 +22,7 @@ import br.com.spring.ecommerce.dto.AddressDTO;
 import br.com.spring.ecommerce.dto.CartProductsDTO;
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.CuponDTO;
+import br.com.spring.ecommerce.dto.GraficResultDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
@@ -396,4 +397,11 @@ public class OrderService {
 		return ctPrice;
 	}
 
+	public ResponseEntity<GraficResultDTO> findQuantityByDatesBetween(Integer id, String ini, String end) {
+		
+		GraficResultDTO results = orderRepository.findByIdAndDateBetween(id, ini, end);
+		
+		return ResponseEntity.ok(results);
+		
+	}
 }

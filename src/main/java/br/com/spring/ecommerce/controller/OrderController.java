@@ -1,5 +1,6 @@
 package br.com.spring.ecommerce.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.CuponDTO;
+import br.com.spring.ecommerce.dto.GraficResultDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.service.OrderService;
 
@@ -62,5 +65,8 @@ public class OrderController {
 		return orderService.findAllProductsByCartId(id);
 	}
 	
-	
+	@GetMapping(value = "/grafics")
+	public ResponseEntity<GraficResultDTO> findQuantityByDatesBetween(@RequestParam Integer id,@RequestParam String ini,@RequestParam String end) {
+		return orderService.findQuantityByDatesBetween(id, ini, end);
+	}
 }
