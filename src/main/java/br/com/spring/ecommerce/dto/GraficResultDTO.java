@@ -2,23 +2,12 @@ package br.com.spring.ecommerce.dto;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public interface GraficResultDTO {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class GraficResultDTO {
-
-	Integer id_pedido;
+	Integer getId_pedido();
 	
-	Integer id_categoria;
+	Integer getId_categoria();
 	
-	Date data_pedidos;
-	
-	Integer volume;
+	Date getHora_pedido();
 	
 }

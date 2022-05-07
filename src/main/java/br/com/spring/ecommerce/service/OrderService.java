@@ -290,7 +290,7 @@ public class OrderService {
 
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 
-		List<Order> order = orderRepository.findAllByUserId(user.getId());
+		List<Order> order = orderRepository.findAllByUserId(user);
 
 		return order.stream().map(o -> {
 
@@ -397,9 +397,9 @@ public class OrderService {
 		return ctPrice;
 	}
 
-	public ResponseEntity<GraficResultDTO> findQuantityByDatesBetween(Integer id, String ini, String end) {
+	public ResponseEntity<List<GraficResultDTO>> findQuantityByDatesBetween() {
 		
-		GraficResultDTO results = orderRepository.findByIdAndDateBetween(id, ini, end);
+		List<GraficResultDTO> results = orderRepository.findByIdAndDateBetween();
 		
 		return ResponseEntity.ok(results);
 		
