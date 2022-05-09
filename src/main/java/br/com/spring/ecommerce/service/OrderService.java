@@ -1,6 +1,7 @@
 package br.com.spring.ecommerce.service;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,8 @@ import br.com.spring.ecommerce.dto.CartProductsDTO;
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.CuponDTO;
 import br.com.spring.ecommerce.dto.GraficResultDTO;
+import br.com.spring.ecommerce.dto.GraficResultImplDTO;
+import br.com.spring.ecommerce.dto.GraficResultPlannedDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.dto.ProductsDTO;
 import br.com.spring.ecommerce.dto.UserDTO;
@@ -173,7 +176,7 @@ public class OrderService {
 							cpDto.add(dto);
 						}
 					});
-					
+
 					cpDto.forEach(l -> {
 
 						l.setPrice(FormatPrice.getPrice(l.getProductDTO().getProd_price() * l.getQuantity()));
@@ -224,7 +227,7 @@ public class OrderService {
 					}
 				}
 			}
-			
+
 			cupon.setC_quantity(cupon.getC_quantity() - 1);
 			cupon.setUser(user);
 
@@ -397,11 +400,93 @@ public class OrderService {
 		return ctPrice;
 	}
 
-	public ResponseEntity<List<GraficResultDTO>> findQuantityByDatesBetween() {
-		
-		List<GraficResultDTO> results = orderRepository.findByIdAndDateBetween();
-		
-		return ResponseEntity.ok(results);
-		
+	public ResponseEntity<List<GraficResultPlannedDTO>> findQuantityByDatesBetween(String dtIni, String dtFim)
+			throws ParseException {
+
+		List<GraficResultDTO> results = orderRepository.findByIdAndDateBetween(dtIni, dtFim);
+
+		List<GraficResultImplDTO> resultsImpl = new ArrayList<>();
+
+		results.forEach(res -> {
+			GraficResultImplDTO impl = new GraficResultImplDTO(res.getTotal(), res.getId_categoria(), res.getCat_nome(),
+					res.getTeste());
+			resultsImpl.add(impl);
+		});
+
+		List<GraficResultPlannedDTO> dto = new ArrayList<>();
+
+		LocalDate ini;
+		LocalDate end = LocalDate.parse(dtFim).plusDays(1);
+
+		for (ini = LocalDate.parse(dtIni); ini.isBefore(end); ini = ini.plusDays(1)) {
+
+			LocalDate iniDate = ini;
+
+			GraficResultPlannedDTO tupla = new GraficResultPlannedDTO();
+
+			tupla.setCat_sale_date(ini);
+
+			List<GraficResultImplDTO> resultsByDay = resultsImpl.stream().filter(d -> d.getGetTeste().equals(iniDate))
+					.collect(Collectors.toList());
+
+			if (CollectionUtils.isEmpty(resultsByDay)) {
+				tupla.setGetCat_corda(0);
+				tupla.setGetCat_eletronicos(0);
+				tupla.setGetCat_outros(0);
+				tupla.setGetCat_percussao(0);
+				tupla.setGetCat_sopro(0);
+			} else {
+				List<GraficResultImplDTO> resultByCorda = resultsByDay.stream()
+						.filter(rbc -> rbc.getGetId_categoria().equals(1)).collect(Collectors.toList());
+
+				if (CollectionUtils.isNotEmpty(resultByCorda)) {
+					tupla.setGetCat_corda(resultByCorda.iterator().next().getGetTotal());
+				} else {
+					tupla.setGetCat_corda(0);
+				}
+
+				List<GraficResultImplDTO> resultBySopro = resultsByDay.stream()
+						.filter(rbc -> rbc.getGetId_categoria().equals(2)).collect(Collectors.toList());
+
+				if (CollectionUtils.isNotEmpty(resultBySopro)) {
+					tupla.setGetCat_sopro(resultBySopro.iterator().next().getGetTotal());
+				} else {
+					tupla.setGetCat_sopro(0);
+				}
+				
+				List<GraficResultImplDTO> resultByPerc = resultsByDay.stream()
+						.filter(rbc -> rbc.getGetId_categoria().equals(3)).collect(Collectors.toList());
+
+				if (CollectionUtils.isNotEmpty(resultByPerc)) {
+					tupla.setGetCat_percussao(resultByPerc.iterator().next().getGetTotal());
+				} else {
+					tupla.setGetCat_percussao(0);
+				}
+				
+				List<GraficResultImplDTO> resultByElet = resultsByDay.stream()
+						.filter(rbc -> rbc.getGetId_categoria().equals(4)).collect(Collectors.toList());
+
+				if (CollectionUtils.isNotEmpty(resultByElet)) {
+					tupla.setGetCat_eletronicos(resultByElet.iterator().next().getGetTotal());
+				} else {
+					tupla.setGetCat_eletronicos(0);
+				}
+				
+				List<GraficResultImplDTO> resultByOutros = resultsByDay.stream()
+						.filter(rbc -> rbc.getGetId_categoria().equals(5)).collect(Collectors.toList());
+
+				if (CollectionUtils.isNotEmpty(resultByOutros)) {
+					tupla.setGetCat_outros(resultByOutros.iterator().next().getGetTotal());
+				} else {
+					tupla.setGetCat_outros(0);
+				}
+
+			}
+			dto.add(tupla);
+		}
+
+		return ResponseEntity.ok(dto);
+
 	}
+
 }

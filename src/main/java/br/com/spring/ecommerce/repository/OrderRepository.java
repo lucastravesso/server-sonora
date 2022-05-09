@@ -22,6 +22,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer>{
 	@Query("SELECT u FROM Order u where u.address = ?1")
 	List<Order> findByAddressId(Integer address);
 	
-	@Query(value = "SELECT id_pedido, id_categoria, hora_pedido FROM grafics ", nativeQuery = true)
-	List<GraficResultDTO> findByIdAndDateBetween();
+	@Query(value = "SELECT total, id_categoria, cat_nome, teste FROM grafics where teste between ?1 AND ?2", nativeQuery = true)
+	List<GraficResultDTO> findByIdAndDateBetween(String dtIni, String dtFim);
 }

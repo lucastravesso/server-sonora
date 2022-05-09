@@ -1,5 +1,6 @@
 package br.com.spring.ecommerce.controller;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.spring.ecommerce.dto.CartTotalPriceDTO;
 import br.com.spring.ecommerce.dto.CuponDTO;
-import br.com.spring.ecommerce.dto.GraficResultDTO;
+import br.com.spring.ecommerce.dto.GraficResultPlannedDTO;
 import br.com.spring.ecommerce.dto.OrderDTO;
 import br.com.spring.ecommerce.service.OrderService;
 
@@ -63,8 +64,8 @@ public class OrderController {
 		return orderService.findAllProductsByCartId(id);
 	}
 	
-	@GetMapping(value = "/grafics")
-	public ResponseEntity<List<GraficResultDTO>> findQuantityByDatesBetween() {
-		return orderService.findQuantityByDatesBetween();
+	@GetMapping(value = "/grafics/{ini}/{fim}")
+	public ResponseEntity<List<GraficResultPlannedDTO>> findQuantityByDatesBetween(@PathVariable("ini") String dtIni,@PathVariable("fim") String dtFim) throws ParseException {
+		return orderService.findQuantityByDatesBetween(dtIni, dtFim);
 	}
 }

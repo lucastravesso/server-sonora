@@ -1,13 +1,16 @@
 package br.com.spring.ecommerce.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+
 
 public interface GraficResultDTO {
 
-	Integer getId_pedido();
+	Integer getTotal();
 	
 	Integer getId_categoria();
 	
-	Date getHora_pedido();
+	String getCat_nome();
+	
+	LocalDate getTeste();
 	
 }
