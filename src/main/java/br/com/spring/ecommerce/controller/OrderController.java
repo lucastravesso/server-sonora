@@ -68,4 +68,5 @@ public class OrderController {
 	public ResponseEntity<List<GraficResultPlannedDTO>> findQuantityByDatesBetween(@PathVariable("ini") String dtIni,@PathVariable("fim") String dtFim) throws ParseException {
 		return orderService.findQuantityByDatesBetween(dtIni, dtFim);
 	}
+	
 }

@@ -1,6 +1,5 @@
 package br.com.spring.ecommerce.dto;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +29,7 @@ public class UserDTO {
 
 	private String born;
 	
-	private Date register;
+	private String register;
 
 	private String email;
 	

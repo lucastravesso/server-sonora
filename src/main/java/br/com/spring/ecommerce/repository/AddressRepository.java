@@ -11,4 +11,6 @@ import br.com.spring.ecommerce.model.Address;
 public interface AddressRepository extends JpaRepository<Address, Integer>{
 
 	List<Address> findAllByUserId(Integer id);
+	
+	Address findByUserId(Integer id);
 }

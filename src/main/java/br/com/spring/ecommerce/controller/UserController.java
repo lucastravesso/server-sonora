@@ -49,6 +49,12 @@ public class UserController {
 		return userService.findUserByToken();
 	}
 	
+	@GetMapping(value = "/findbyid/{id}")
+	public ResponseEntity<UserDTO> findOneById(@PathVariable("id") Integer id)
+	{
+		return userService.findUserById(id);
+	}
+	
 	@DeleteMapping(value ="/delete/{id}")
 	public ResponseEntity<?> deleteUser(@PathVariable("id") Integer id) throws AccountNotFoundException
 	{

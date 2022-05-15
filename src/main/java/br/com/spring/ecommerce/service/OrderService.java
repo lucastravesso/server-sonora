@@ -399,6 +399,7 @@ public class OrderService {
 		ctPrice.setUser(uDto);
 		return ctPrice;
 	}
+	
 
 	public ResponseEntity<List<GraficResultPlannedDTO>> findQuantityByDatesBetween(String dtIni, String dtFim)
 			throws ParseException {

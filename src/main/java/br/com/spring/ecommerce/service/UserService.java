@@ -72,6 +72,39 @@ public class UserService {
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
+	
+	public ResponseEntity<UserDTO> findUserById(Integer id){
+		
+		Optional<User> user = userRepository.findById(id);
+		
+		if(Objects.nonNull(user)) {
+			UserDTO uDto = new UserDTO();
+			
+			BeanUtils.copyProperties(user.get(), uDto);
+			
+			uDto.setBorn(FormatDate.convertDateToString(user.get().getBorn()));
+			uDto.setRegister(FormatDate.convertDateToString(user.get().getRegister()));
+			
+			List<Address> addressList = addressRepository.findAllByUserId(id);
+			
+			if(Objects.nonNull(addressList)) {
+				
+				List<AddressDTO> aDtoList = new ArrayList<>();
+				
+				addressList.forEach(a -> {
+					AddressDTO temp = new AddressDTO();
+					BeanUtils.copyProperties(a, temp);
+					aDtoList.add(temp);
+				});
+				
+				uDto.setAddressDto(aDtoList);
+			}
+			
+			return ResponseEntity.ok(uDto);
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();	
+	}
+	
 
 	public ResponseEntity<UserDTO> findUserByToken() {
 
