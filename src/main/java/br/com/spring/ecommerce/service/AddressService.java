@@ -50,7 +50,8 @@ public class AddressService {
 	}
 
 	public ResponseEntity<?> deleteAddress(Integer Id) throws AccountNotFoundException {
-		List<Order> order = orderRepository.findByAddressId(Id);
+		Optional<Address> address = addressRepository.findById(Id);
+		List<Order> order = orderRepository.findByAddressId(address.get());
 		if (order.isEmpty()) {
 			addressRepository.findById(Id).orElseThrow(() -> new AccountNotFoundException());
 			addressRepository.deleteById(Id);

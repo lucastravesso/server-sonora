@@ -27,7 +27,7 @@ public class AddressController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteAddress(@PathVariable Integer id) throws AccountNotFoundException{
+	public ResponseEntity<?> deleteAddress(@PathVariable("id") Integer id) throws AccountNotFoundException{
 		return addressService.deleteAddress(id);
 	}
 	
