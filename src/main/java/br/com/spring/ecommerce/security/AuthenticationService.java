@@ -1,6 +1,8 @@
 package br.com.spring.ecommerce.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +24,12 @@ public class AuthenticationService implements UserDetailsService{
 		
 		User user = repository.findByEmail(username).orElseThrow(()->new UsernameNotFoundException("Dados inválidos!"));
 		return user;
+	}
+	
+	public ResponseEntity<UserDetails> searchMail(String mail){
+		@SuppressWarnings("unused")
+		User user = repository.findByEmail(mail).orElseThrow(()->new UsernameNotFoundException("Valid mail"));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	}
 	
 	public UserTokenDetails getCurrent() {

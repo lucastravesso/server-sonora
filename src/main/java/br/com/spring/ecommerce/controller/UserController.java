@@ -75,4 +75,21 @@ public class UserController {
 		return userService.updatePassword(dto);
 	}
 	
+	@Transactional
+	@PutMapping(value = "/inactive")
+	public ResponseEntity<?> inactivateUser(){
+		return userService.inactivateUser();
+	}
+	
+	@Transactional
+	@PutMapping(value = "/active/{id}")
+	public ResponseEntity<?> inactivateUser(@PathVariable("id") Integer id){
+		return userService.activateUser(id);
+	}
+	
+	@GetMapping(value = "/verify")
+	public ResponseEntity<?> verifyUser(){
+		return userService.verifyActivity();
+	}
+	
 }

@@ -71,6 +71,9 @@ public class User implements UserDetails {
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private Set<Profile> profiles = new HashSet<>();
+	
+	@Column(name = "usu_ativo")
+	protected Integer active;
 
 	@OneToOne(targetEntity = Cart.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_carrinho", foreignKey = @ForeignKey(name = "fk_carrinho"))

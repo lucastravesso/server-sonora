@@ -51,7 +51,7 @@ public class UserService {
 	@Autowired
 	private EncoderService eService;
 
-	private Mapper mapper = new DozerBeanMapper();
+	private final Mapper mapper = new DozerBeanMapper();
 
 	public ResponseEntity<User> insertUserWithoutAddress(UserWithoutAddressDTO dto) {
 		User user = mapper.map(dto, User.class);
@@ -72,39 +72,38 @@ public class UserService {
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
-	
-	public ResponseEntity<UserDTO> findUserById(Integer id){
-		
+
+	public ResponseEntity<UserDTO> findUserById(Integer id) {
+
 		Optional<User> user = userRepository.findById(id);
-		
-		if(Objects.nonNull(user)) {
+
+		if (Objects.nonNull(user)) {
 			UserDTO uDto = new UserDTO();
-			
+
 			BeanUtils.copyProperties(user.get(), uDto);
-			
+
 			uDto.setBorn(FormatDate.convertDateToString(user.get().getBorn()));
 			uDto.setRegister(FormatDate.convertDateToString(user.get().getRegister()));
-			
+
 			List<Address> addressList = addressRepository.findAllByUserId(id);
-			
-			if(Objects.nonNull(addressList)) {
-				
+
+			if (Objects.nonNull(addressList)) {
+
 				List<AddressDTO> aDtoList = new ArrayList<>();
-				
+
 				addressList.forEach(a -> {
 					AddressDTO temp = new AddressDTO();
 					BeanUtils.copyProperties(a, temp);
 					aDtoList.add(temp);
 				});
-				
+
 				uDto.setAddressDto(aDtoList);
 			}
-			
+
 			return ResponseEntity.ok(uDto);
 		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();	
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
-	
 
 	public ResponseEntity<UserDTO> findUserByToken() {
 
@@ -118,14 +117,14 @@ public class UserService {
 
 			List<Address> addressList = addressRepository.findAllByUserId(user.getId());
 			List<AddressDTO> addressDto = new ArrayList<>();
-			addressList.forEach(e ->{
+			addressList.forEach(e -> {
 				AddressDTO aDto = new AddressDTO();
 				BeanUtils.copyProperties(e, aDto);
 				addressDto.add(aDto);
 			});
 
 			uDto.setAddressDto(addressDto);
-			
+
 			return ResponseEntity.ok(uDto);
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -189,6 +188,41 @@ public class UserService {
 		}
 
 		return ResponseEntity.notFound().build();
+	}
+
+	public ResponseEntity<?> inactivateUser() {
+
+		Optional<User> user = userRepository.findById(authService.getCurrent().getId());
+
+		if (user.isPresent()) {
+			user.get().setActive(0);
+			userRepository.save(user.get());
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
+
+	public ResponseEntity<?> activateUser(Integer id) {
+
+		Optional<User> user = userRepository.findById(id);
+
+		if (user.isPresent()) {
+			user.get().setActive(1);
+			userRepository.save(user.get());
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
+	
+	public ResponseEntity<?> verifyActivity(){
+		Optional<User> user = userRepository.findById(authService.getCurrent().getId());
+		
+		if(user.get().getActive().equals(1)) {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+		}
+		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 	}
 
 }
