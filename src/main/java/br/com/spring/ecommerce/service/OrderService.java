@@ -136,7 +136,7 @@ public class OrderService {
 				prodRepository.save(p);
 			});
 
-			BeanUtils.copyProperties(cDto, cupon);
+			BeanUtils.copyProperties(cDto, cupon, "c_register", "c_final");
 
 			if (Objects.nonNull(cupon)) {
 

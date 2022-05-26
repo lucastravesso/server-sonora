@@ -181,7 +181,7 @@ public class UserService {
 
 			user.get().setBorn(FormatDate.convertStringToDate(dto.getBorn()));
 
-			BeanUtils.copyProperties(dto, user.get(), "password", "id");
+			BeanUtils.copyProperties(dto, user.get(), "password", "id", "active");
 
 			userRepository.save(user.get());
 			return ResponseEntity.ok().build();
