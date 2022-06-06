@@ -64,6 +64,7 @@ public class UserService {
 				.collect(Collectors.toSet());
 		user.setProfiles(role);
 
+		user.setActive(1);
 		user.setCart(cart);
 		cart.setUser(user);
 		user.setRegister(new Date());
@@ -202,6 +203,20 @@ public class UserService {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
+	
+	public ResponseEntity<?> inactivateUser(Integer id) {
+
+		Optional<User> user = userRepository.findById(id);
+
+		if (user.isPresent()) {
+			user.get().setActive(0);
+			userRepository.save(user.get());
+			return ResponseEntity.ok().build();
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
+
 
 	public ResponseEntity<?> activateUser(Integer id) {
 

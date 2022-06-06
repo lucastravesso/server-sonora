@@ -88,6 +88,20 @@ public class CardService {
 		}).collect(Collectors.toList());
 	}
 	
+	public List<CardDTO> findAllByUserId(Integer id)
+	{		
+		List<Card> cards = cardRepository.findAllByUserId(id);
+		
+		return cards.stream().map(c -> {
+			CardDTO dto = new CardDTO();
+			
+			BeanUtils.copyProperties(c, dto, "user");
+			
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
+	
 	public ResponseEntity<?> delete(Integer Id) throws AccountNotFoundException
 	{
 		cardRepository.findById(Id).orElseThrow(() -> new AccountNotFoundException());

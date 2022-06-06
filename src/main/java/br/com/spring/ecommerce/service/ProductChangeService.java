@@ -45,12 +45,14 @@ public class ProductChangeService {
 	private AuthenticationService authService;
 
 	public ResponseEntity<?> createChange(Integer id, ProductChangeDTO dto) {
+		
 		ProductChange pChange = new ProductChange();
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		Optional<Products> product = productsRepository.findById(id);
 
 		BeanUtils.copyProperties(dto, pChange, "id", "change_date", "change_reply", "user", "product", "status");
 
+		pChange.setChange_notification(1);
 		pChange.setUser(user);
 		pChange.setProduct(product.get());
 		pChange.setChange_date(new Date());
@@ -93,6 +95,8 @@ public class ProductChangeService {
 			return ResponseEntity.ok().build();
 
 		}
+		
+		pChange.get().setChange_notification(2);
 
 		pChange.get().setChange_reply(dto.getChange_reply());
 
@@ -121,6 +125,9 @@ public class ProductChangeService {
 
 		User user = userRepository.findOneById(authService.getCurrent().getId());
 		List<ProductChange> pChange = productChangeReposioty.findByUserId(user);
+		
+		Integer total = pChange.stream().map(x -> x.getChange_notification()).reduce((x, y) -> x + y).orElse(0);
+
 
 		return pChange.stream().map(p -> {
 			ProductChangeDTO dto = new ProductChangeDTO();
@@ -129,6 +136,8 @@ public class ProductChangeService {
 
 			dto.setChange_date(FormatDate.convertDateToString(p.getChange_date()));
 
+			dto.setNotificationsQntd(total);
+			
 			return dto;
 		}).collect(Collectors.toList());
 

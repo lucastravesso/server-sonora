@@ -43,6 +43,9 @@ public class ProductChange {
 	@Column(name = "hora_pedido")
 	private Date change_date;
 	
+	@Column(name = "notificacao_pedido")
+	private Integer change_notification;
+	
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "id_usuario", foreignKey = @ForeignKey(name = "fk_usuario"))
 	private User user;

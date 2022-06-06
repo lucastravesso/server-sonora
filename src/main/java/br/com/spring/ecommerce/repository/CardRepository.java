@@ -15,4 +15,7 @@ public interface CardRepository extends JpaRepository<Card, Integer>{
 	@Query("SELECT u from Card u where u.user = ?1")
 	List<Card> findByUserId(User user);
 	
+	@Query(value = "select * from cartao where id_usuario = ?1", nativeQuery = true)
+	List<Card> findAllByUserId(Integer id);
+	
 }

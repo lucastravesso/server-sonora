@@ -82,6 +82,12 @@ public class UserController {
 	}
 	
 	@Transactional
+	@PutMapping(value = "/inactive/{id}")
+	public ResponseEntity<?> inactivateUsers(@PathVariable("id") Integer id){
+		return userService.inactivateUser(id);
+	}
+	
+	@Transactional
 	@PutMapping(value = "/active/{id}")
 	public ResponseEntity<?> inactivateUser(@PathVariable("id") Integer id){
 		return userService.activateUser(id);

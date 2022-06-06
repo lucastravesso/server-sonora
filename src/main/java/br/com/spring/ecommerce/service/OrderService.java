@@ -143,12 +143,6 @@ public class OrderService {
 				if (cupon.getC_type() == 0) {
 
 					cupon.setC_quantity(cupon.getC_quantity() - 1);
-					try {
-						cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
-						cupon.setC_final(FormatDate.convertStringToDate(cDto.getC_final()));
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
 
 					order.setCupon(cupon);
 
@@ -192,13 +186,6 @@ public class OrderService {
 
 						cupon.setC_quantity(cupon.getC_quantity() - 1);
 						cupon.setUser(user);
-
-						try {
-							cupon.setC_register(FormatDate.convertStringToDate(cDto.getC_register()));
-							cupon.setC_final(FormatDate.convertStringToDate(cDto.getC_final()));
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
 
 						Random rand = new Random();
 						Integer nome = rand.nextInt(999999);
@@ -292,6 +279,24 @@ public class OrderService {
 	public List<OrderDTO> listAllByUserId() {
 
 		User user = userRepository.findOneById(authService.getCurrent().getId());
+
+		List<Order> order = orderRepository.findAllByUserId(user);
+
+		return order.stream().map(o -> {
+
+			OrderDTO dto = new OrderDTO();
+
+			BeanUtils.copyProperties(o, dto);
+
+			dto.setOrderDate(FormatDate.convertDateToString(o.getOrderDate()));
+
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
+	public List<OrderDTO> listAllByUserId(Integer id) {
+
+		User user = userRepository.findOneById(id);
 
 		List<Order> order = orderRepository.findAllByUserId(user);
 

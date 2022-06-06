@@ -49,6 +49,11 @@ public class CardController {
 		return cardService.findAllById();
 	}
 	
+	@GetMapping("/listallbyid/{id}")
+	public List<CardDTO> findAllByUserId(@PathVariable("id") Integer id){
+		return cardService.findAllByUserId(id);
+	}
+	
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") Integer id) throws AccountNotFoundException
 	{

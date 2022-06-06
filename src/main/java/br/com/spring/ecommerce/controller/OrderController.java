@@ -54,6 +54,11 @@ public class OrderController {
 		return orderService.listAllByUserId();
 	}
 	
+	@GetMapping(value = "/findByUser/{id}")
+	public List<OrderDTO> findAllByUserId(@PathVariable("id") Integer id){
+		return orderService.listAllByUserId(id);
+	}
+	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<OrderDTO> findById(@PathVariable("id") Integer id){
 		return orderService.findOrderById(id);

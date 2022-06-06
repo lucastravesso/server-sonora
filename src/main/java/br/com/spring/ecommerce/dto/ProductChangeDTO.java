@@ -20,10 +20,15 @@ public class ProductChangeDTO {
 	private String change_reason;
 	
 	private String change_reply;
-		
+	
+	private Integer change_notification;
+
 	private Products product;
 	
-
+	private Integer notificationsQntd;
+	
+	private boolean have_notifications;
+	
 	private ChangeStatus status;
 	
 }
