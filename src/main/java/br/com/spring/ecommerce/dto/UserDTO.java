@@ -37,6 +37,8 @@ public class UserDTO {
 	
 	private Integer active;
 	
+	private Integer usu_rank;
+	
 	private List<AddressDTO> addressDto;
 		
 	private Set<Profile> profile;

@@ -78,6 +78,9 @@ public class User implements UserDetails {
 	@OneToOne(targetEntity = Cart.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_carrinho", foreignKey = @ForeignKey(name = "fk_carrinho"))
 	private Cart cart;
+	
+	@Column(name = "usu_ranking")
+	private Integer rank;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

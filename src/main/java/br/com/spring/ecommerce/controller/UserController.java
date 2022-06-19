@@ -98,4 +98,24 @@ public class UserController {
 		return userService.verifyActivity();
 	}
 	
+	@GetMapping(value = "/findbyname/{name}")
+	public List<UserDTO> findAllByFirstName(@PathVariable("name") String name){
+		return userService.findAllByFirstName(name);
+	}
+	
+	@GetMapping(value = "/findbyemail/{email}")
+	public List<UserDTO> findAllByEmail(@PathVariable("email") String email){
+		return userService.findAllByEmail(email);
+	}
+	
+	@GetMapping(value = "/findstatus")
+	public List<UserDTO> findAllByEmail(){
+		return userService.findAllByStatus();
+	}
+	
+	@GetMapping(value = "/findmail/{mail}")
+	public ResponseEntity<?> findEmail(@PathVariable("mail") String email){
+		return userService.findOneEmail(email);
+	}
+	
 }

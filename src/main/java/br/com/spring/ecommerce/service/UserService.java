@@ -25,9 +25,11 @@ import br.com.spring.ecommerce.dto.UserDTO;
 import br.com.spring.ecommerce.dto.UserWithoutAddressDTO;
 import br.com.spring.ecommerce.model.Address;
 import br.com.spring.ecommerce.model.Cart;
+import br.com.spring.ecommerce.model.Order;
 import br.com.spring.ecommerce.model.Profile;
 import br.com.spring.ecommerce.model.User;
 import br.com.spring.ecommerce.repository.AddressRepository;
+import br.com.spring.ecommerce.repository.OrderRepository;
 import br.com.spring.ecommerce.repository.ProfileRepository;
 import br.com.spring.ecommerce.repository.UserRepository;
 import br.com.spring.ecommerce.security.AuthenticationService;
@@ -42,6 +44,9 @@ public class UserService {
 	@Autowired
 	private AddressRepository addressRepository;
 
+	@Autowired
+	private OrderRepository orderRepository;
+	
 	@Autowired
 	private ProfileRepository profileRepository;
 
@@ -132,17 +137,24 @@ public class UserService {
 	}
 
 	public List<UserDTO> listAll() {
-//refatorar para listar os address
-		List<User> user = userRepository.findAll();
 
+		List<User> user = userRepository.findAll();
+		
+		user.forEach(u -> {
+			List<Order> order = orderRepository.findAllByUserId(u);
+			u.setRank(order.size());			
+			userRepository.save(u);
+		});
+		
 		return user.stream().map(u -> {
 
 			UserDTO dto = new UserDTO();
 
 			if (Objects.nonNull(u)) {
-
+				
 				BeanUtils.copyProperties(u, dto, "password");
 				dto.setBorn(FormatDate.convertDateToString(u.getBorn()));
+				dto.setUsu_rank(u.getRank());
 			}
 
 			return dto;
@@ -239,5 +251,86 @@ public class UserService {
 		}
 		return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 	}
+	
+	public List<UserDTO> findAllByFirstName(String nome){
+		List<User> user = userRepository.findByFirstNameLike(nome);
+		
+		user.forEach(u -> {
+			List<Order> order = orderRepository.findAllByUserId(u);
+			u.setRank(order.size());			
+			userRepository.save(u);
+		});
+		
+		return user.stream().map(u -> {
 
+			UserDTO dto = new UserDTO();
+
+			if (Objects.nonNull(u)) {
+				
+				BeanUtils.copyProperties(u, dto, "password");
+				dto.setBorn(FormatDate.convertDateToString(u.getBorn()));
+				dto.setUsu_rank(u.getRank());
+			}
+
+			return dto;
+		}).collect(Collectors.toList());
+	}
+
+	public List<UserDTO> findAllByEmail(String email){
+		List<User> user = userRepository.findByEmailLike(email);
+		
+		user.forEach(u -> {
+			List<Order> order = orderRepository.findAllByUserId(u);
+			u.setRank(order.size());			
+			userRepository.save(u);
+		});
+		
+		return user.stream().map(u -> {
+
+			UserDTO dto = new UserDTO();
+
+			if (Objects.nonNull(u)) {
+				
+				BeanUtils.copyProperties(u, dto, "password");
+				dto.setBorn(FormatDate.convertDateToString(u.getBorn()));
+				dto.setUsu_rank(u.getRank());
+			}
+
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
+	public List<UserDTO> findAllByStatus(){
+		List<User> user = userRepository.findByStatus();
+		
+		user.forEach(u -> {
+			List<Order> order = orderRepository.findAllByUserId(u);
+			u.setRank(order.size());			
+			userRepository.save(u);
+		});
+
+		return user.stream().map(u -> {
+
+			UserDTO dto = new UserDTO();
+
+			if (Objects.nonNull(u)) {
+				
+				BeanUtils.copyProperties(u, dto, "password");
+				dto.setBorn(FormatDate.convertDateToString(u.getBorn()));
+				dto.setUsu_rank(u.getRank());
+			}
+
+			return dto;
+		}).collect(Collectors.toList());
+	}
+	
+	public ResponseEntity<?> findOneEmail(String mail){
+		Optional<User> user = userRepository.findByEmail(mail);
+		
+		if(user.isPresent()) {
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+		}else {
+			return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+		}
+	}
 }

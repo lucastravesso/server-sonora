@@ -17,6 +17,7 @@ public class AuditoryService {
 	
 	public Page<AuditoryDTO> listAll(Pageable page){
 		Page<AuditoryDTO> dto = profileRepository.listAll(page);
+
 		return dto;
 	}
 	
