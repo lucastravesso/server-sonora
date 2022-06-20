@@ -25,14 +25,18 @@ import br.com.spring.ecommerce.util.FormatDate;
 @Service
 public class CuponService {
 
-	@Autowired
-	private CuponRepository cuponRepository;
+	private final CuponRepository cuponRepository;
 	
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 	
-	@Autowired
 	private AuthenticationService authService;
+	
+	@Autowired
+	public CuponService(CuponRepository cuponRepository, UserRepository userRepository, AuthenticationService authService) {
+		this.cuponRepository = cuponRepository;
+		this.userRepository = userRepository;
+		this.authService = authService;
+	}
 	
 	public ResponseEntity<Cupon> insertCupon(CuponDTO dto) throws ParseException
 	{
